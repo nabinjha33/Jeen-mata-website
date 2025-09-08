@@ -14,7 +14,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ children, showSidebar = false }: MainLayoutProps) {
   const { currentUser } = useAppStore()
-  const shouldShowSidebar = showSidebar && currentUser?.role === "admin"
+  const shouldShowSidebar = showSidebar && currentUser && ['owner', 'manager', 'content_editor'].includes(currentUser.role)
 
   return (
     <div className="min-h-screen flex flex-col">
