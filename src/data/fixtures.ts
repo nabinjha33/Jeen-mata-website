@@ -36,9 +36,11 @@ export interface User {
   id: string
   name: string
   email: string
-  role: "admin" | "customer"
+  role: "owner" | "manager" | "content_editor" | "customer"
   phone: string
   company?: string
+  permissions?: string[]
+  avatar?: string
 }
 
 export interface Inquiry {
@@ -65,6 +67,40 @@ export interface Shipment {
   carrier: string
   origin?: string
   destination?: string
+  timeline?: Array<{
+    id: string
+    status: string
+    timestamp: Date
+    location?: string
+    notes?: string
+  }>
+  manifestItems?: Array<{
+    productId: string
+    quantity: number
+  }>
+}
+
+export interface AdminSettings {
+  catalog: {
+    priceVisibility: boolean
+    lowStockThreshold: number
+    outOfStockThreshold: number
+  }
+  localization: {
+    defaultLanguage: string
+    enabledLanguages: string[]
+    uiCopy: Record<string, Record<string, string>>
+  }
+}
+
+export interface AdminActivity {
+  id: string
+  userId: string
+  action: string
+  target: string
+  targetId: string
+  timestamp: Date
+  details?: string
 }
 
 // Mock Categories
@@ -295,14 +331,36 @@ export const mockProducts: Product[] = [
 export const mockUsers: User[] = [
   {
     id: "1",
-    name: "Admin User",
-    email: "admin@jeenmataimPex.com",
-    role: "admin",
+    name: "Pradeep Sharma",
+    email: "pradeep@jeenmataimPex.com",
+    role: "owner",
     phone: "+977-1-4567890",
     company: "Jeen Mata Impex",
+    permissions: ["all"],
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
   },
   {
     id: "2",
+    name: "Sita Thapa",
+    email: "sita@jeenmataimPex.com",
+    role: "manager",
+    phone: "+977-1-4567891",
+    company: "Jeen Mata Impex",
+    permissions: ["products", "brands", "inquiries", "shipments", "customers"],
+    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b977?w=150&h=150&fit=crop&crop=face",
+  },
+  {
+    id: "3",
+    name: "Rajesh Patel",
+    email: "rajesh@jeenmataimPex.com",
+    role: "content_editor",
+    phone: "+977-1-4567892",
+    company: "Jeen Mata Impex",
+    permissions: ["products", "brands"],
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+  },
+  {
+    id: "4",
     name: "राम श्रेष्ठ",
     email: "ram@example.com",
     role: "customer",
@@ -310,7 +368,7 @@ export const mockUsers: User[] = [
     company: "श्रेष्ठ कन्स्ट्रक्शन",
   },
   {
-    id: "3",
+    id: "5",
     name: "John Contractor",
     email: "john@buildpro.com",
     role: "customer",
@@ -318,6 +376,88 @@ export const mockUsers: User[] = [
     company: "BuildPro Contractors",
   },
 ]
+
+// Mock Admin Settings
+export const mockAdminSettings: AdminSettings = {
+  catalog: {
+    priceVisibility: true,
+    lowStockThreshold: 10,
+    outOfStockThreshold: 0,
+  },
+  localization: {
+    defaultLanguage: "en",
+    enabledLanguages: ["en", "ne"],
+    uiCopy: {
+      en: {
+        companyName: "Jeen Mata Impex",
+        companyTagline: "Quality Tools & Hardware",
+        welcome: "Welcome to our store",
+        products: "Products",
+        brands: "Brands",
+        inquiries: "Inquiries",
+        shipments: "Shipments",
+      },
+      ne: {
+        companyName: "जीन माता इम्पेक्स",
+        companyTagline: "गुणस्तरीय उपकरण र हार्डवेयर",
+        welcome: "हाम्रो स्टोरमा स्वागत छ",
+        products: "उत्पादनहरू",
+        brands: "ब्रान्डहरू",
+        inquiries: "सोधपुछ",
+        shipments: "ढुवानी",
+      },
+    },
+  },
+};
+
+// Mock Admin Activity
+export const mockAdminActivity: AdminActivity[] = [
+  {
+    id: "1",
+    userId: "2",
+    action: "updated",
+    target: "product",
+    targetId: "1",
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    details: "Updated stock status for Bosch GSB 550 Impact Drill",
+  },
+  {
+    id: "2",
+    userId: "3",
+    action: "created",
+    target: "product",
+    targetId: "8",
+    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
+    details: "Added new product: Bosch Professional Safety Goggles",
+  },
+  {
+    id: "3",
+    userId: "2",
+    action: "responded",
+    target: "inquiry",
+    targetId: "1",
+    timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
+    details: "Responded to inquiry from राम श्रेष्ठ",
+  },
+  {
+    id: "4",
+    userId: "1",
+    action: "updated",
+    target: "settings",
+    targetId: "catalog",
+    timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
+    details: "Updated catalog visibility settings",
+  },
+  {
+    id: "5",
+    userId: "2",
+    action: "shipped",
+    target: "shipment",
+    targetId: "3",
+    timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000),
+    details: "Marked shipment JMI-2024-003 as shipped",
+  },
+];
 
 // Mock Inquiries
 export const mockInquiries: Inquiry[] = [
