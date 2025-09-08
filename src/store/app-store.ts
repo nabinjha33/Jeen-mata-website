@@ -98,7 +98,7 @@ export const useAppStore = create<AppStore>()(
       
       // Initial UI state
       sidebarOpen: false,
-      currentUser: mockUsers.find(u => ['owner', 'manager', 'content_editor'].includes(u.role)) || null,
+      currentUser: mockUsers.find(u => u.role === 'owner') || null,
       inquiryCart: [],
       searchQuery: '',
       selectedCategory: null,
