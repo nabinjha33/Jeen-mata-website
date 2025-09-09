@@ -61,7 +61,7 @@ export function AdminInquiriesPage() {
     const customer = getUserById(inquiry.customerId)
     const productsText = inquiry.products.map(p => {
       const product = getProductById(p.productId)
-      return `• ${product?.name || 'Unknown Product'} (${p.quantity} pieces)`
+      return `• ${product?.name || 'Unknown Product'} (${p.quantity} units)`
     }).join('\n')
     
     return `Hello ${customer?.fullName}, thank you for your inquiry!\n\nYour requested items:\n${productsText}\n\nWe'll get back to you with details and pricing soon.\n\n- Jeen Mata Impex Team`
@@ -71,7 +71,7 @@ export function AdminInquiriesPage() {
     const customer = getUserById(inquiry.customerId)
     const productsText = inquiry.products.map(p => {
       const product = getProductById(p.productId)
-      return `${product?.name || 'Unknown Product'} - ${p.quantity} pieces`
+      return `${product?.name || 'Unknown Product'} - ${p.quantity} units`
     }).join(', ')
     
     return {

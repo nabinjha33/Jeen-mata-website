@@ -147,9 +147,6 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                     {formatCurrency(currentPrice)}
                   </span>
                 )}
-                <p className="text-caption text-muted-foreground">
-                  SKU: {currentVariant?.sku || product.sku}
-                </p>
               </div>
               
               <div className="flex flex-col items-end gap-1">

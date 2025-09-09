@@ -214,9 +214,6 @@ export function ProductDetailPage() {
                   {formatCurrency(currentPrice)}
                 </div>
               )}
-              <div className="text-small text-muted-foreground">
-                SKU: {currentSku}
-              </div>
             </div>
             
             {/* Upcoming Consignment Alert */}
@@ -308,7 +305,7 @@ export function ProductDetailPage() {
                   <div className="flex items-center gap-2 text-small text-muted-foreground">
                     <Boxes className="h-4 w-4" />
                     <span>
-                      {quantity} {selectedPackingOption.label} = {quantity * selectedPackingOption.unitsPerPack} pieces total
+                      {quantity} {selectedPackingOption.label} = {quantity * selectedPackingOption.unitsPerPack} units total
                     </span>
                   </div>
                 )}
@@ -485,7 +482,7 @@ export function ProductDetailPage() {
                                 <div>
                                   <div className="font-medium">{packing.label}</div>
                                   <div className="text-small text-muted-foreground">
-                                    {packing.unitsPerPack} pieces per {packing.type}
+                                    {packing.unitsPerPack} units per {packing.type}
                                   </div>
                                   <div className="text-caption text-muted-foreground">
                                     Type: {packing.type}

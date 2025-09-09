@@ -240,7 +240,7 @@ export const mockProducts: Product[] = [
         price: 8500,
         unit: "pc",
         packingOptions: [
-          { id: "1-10-piece", type: "piece", unitsPerPack: 1, label: "Piece", notes: "Individual unit" },
+          { id: "1-10-piece", type: "piece", unitsPerPack: 1, label: "Unit", notes: "Individual unit" },
           { id: "1-10-box", type: "box", unitsPerPack: 5, label: "Box(5)", notes: "5 units per box" }
         ]
       },
@@ -252,7 +252,7 @@ export const mockProducts: Product[] = [
         price: 9200,
         unit: "pc",
         packingOptions: [
-          { id: "1-13-piece", type: "piece", unitsPerPack: 1, label: "Piece", notes: "Individual unit" },
+          { id: "1-13-piece", type: "piece", unitsPerPack: 1, label: "Unit", notes: "Individual unit" },
           { id: "1-13-box", type: "box", unitsPerPack: 4, label: "Box(4)", notes: "4 units per box" }
         ]
       },
@@ -264,7 +264,7 @@ export const mockProducts: Product[] = [
         price: 10500,
         unit: "pc",
         packingOptions: [
-          { id: "1-16-piece", type: "piece", unitsPerPack: 1, label: "Piece", notes: "Individual unit" },
+          { id: "1-16-piece", type: "piece", unitsPerPack: 1, label: "Unit", notes: "Individual unit" },
           { id: "1-16-box", type: "box", unitsPerPack: 3, label: "Box(3)", notes: "3 units per box" }
         ]
       }
@@ -314,7 +314,7 @@ export const mockProducts: Product[] = [
         price: 350,
         unit: "pc",
         packingOptions: [
-          { id: "3-3-piece", type: "piece", unitsPerPack: 1, label: "Piece" },
+          { id: "3-3-piece", type: "piece", unitsPerPack: 1, label: "Unit" },
           { id: "3-3-box", type: "box", unitsPerPack: 12, label: "Box(12)", notes: "12 pieces per box" },
           { id: "3-3-carton", type: "carton", unitsPerPack: 144, label: "Carton(12×Box)", notes: "12 boxes per carton" }
         ]
@@ -327,7 +327,7 @@ export const mockProducts: Product[] = [
         price: 450,
         unit: "pc",
         packingOptions: [
-          { id: "3-5-piece", type: "piece", unitsPerPack: 1, label: "Piece" },
+          { id: "3-5-piece", type: "piece", unitsPerPack: 1, label: "Unit" },
           { id: "3-5-box", type: "box", unitsPerPack: 10, label: "Box(10)", notes: "10 pieces per box" },
           { id: "3-5-carton", type: "carton", unitsPerPack: 120, label: "Carton(12×Box)", notes: "12 boxes per carton" }
         ]
@@ -340,7 +340,7 @@ export const mockProducts: Product[] = [
         price: 650,
         unit: "pc",
         packingOptions: [
-          { id: "3-8-piece", type: "piece", unitsPerPack: 1, label: "Piece" },
+          { id: "3-8-piece", type: "piece", unitsPerPack: 1, label: "Unit" },
           { id: "3-8-box", type: "box", unitsPerPack: 6, label: "Box(6)", notes: "6 pieces per box" }
         ]
       }

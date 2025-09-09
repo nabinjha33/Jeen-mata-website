@@ -162,7 +162,7 @@ export function InquiryCartPage() {
         <div>
           <h1 className="text-h1 font-semibold">{t('inquiryCart_title')}</h1>
           <p className="text-muted-foreground">
-            {totalItems} item{totalItems !== 1 ? 's' : ''} • {totalPieces} pieces total
+            {totalItems} item{totalItems !== 1 ? 's' : ''} • {totalPieces} units total
           </p>
         </div>
         
@@ -277,7 +277,7 @@ export function InquiryCartPage() {
                         </div>
                         {item.totalPieces > item.quantity && (
                           <div className="text-small text-muted-foreground">
-                            {item.totalPieces} pieces total
+                            {item.totalPieces} units total
                           </div>
                         )}
                       </div>
@@ -335,7 +335,7 @@ export function InquiryCartPage() {
                 <span>{totalItems}</span>
               </div>
               <div className="flex justify-between">
-                <span>Total Pieces:</span>
+                <span>Total Units:</span>
                 <span className="font-medium">{totalPieces}</span>
               </div>
               <div className="flex justify-between">
@@ -349,7 +349,7 @@ export function InquiryCartPage() {
                 </p>
                 {totalPieces > totalItems && (
                   <p className="text-small text-muted-foreground">
-                    * Total pieces include packing calculations
+                    * Total units include packing calculations
                   </p>
                 )}
               </div>
