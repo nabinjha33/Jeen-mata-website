@@ -19,14 +19,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu"
-import { Plus, Search, Filter, MoreHorizontal, Edit, Trash, Eye } from "lucide-react"
+import { Plus, Search, Filter, MoreHorizontal, Edit, Trash, Eye, Package, Boxes, Settings } from "lucide-react"
 import { useAppStore } from "../../store/app-store"
 
 export function AdminProductsPage() {
-  const { products, brands, categories } = useAppStore()
+  const { products, brands, categories, getVariantStockStatus } = useAppStore()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [showVariantsOnly, setShowVariantsOnly] = useState(false)
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = searchQuery === "" || 
@@ -35,8 +36,9 @@ export function AdminProductsPage() {
     
     const matchesBrand = !selectedBrand || product.brand === selectedBrand
     const matchesCategory = !selectedCategory || product.category === selectedCategory
+    const matchesVariantFilter = !showVariantsOnly || (product.variants && product.variants.length > 0)
     
-    return matchesSearch && matchesBrand && matchesCategory
+    return matchesSearch && matchesBrand && matchesCategory && matchesVariantFilter
   })
 
   return (
@@ -117,6 +119,14 @@ export function AdminProductsPage() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+            
+            <Button 
+              variant={showVariantsOnly ? "default" : "outline"}
+              onClick={() => setShowVariantsOnly(!showVariantsOnly)}
+            >
+              <Boxes className="h-4 w-4 mr-2" />
+              {showVariantsOnly ? "Show All" : "Variants Only"}
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -140,6 +150,7 @@ export function AdminProductsPage() {
                   <TableHead>Category</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Stock</TableHead>
+                  <TableHead>Variants</TableHead>
                   <TableHead className="w-[70px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -166,11 +177,58 @@ export function AdminProductsPage() {
                     </TableCell>
                     <TableCell>{product.brand}</TableCell>
                     <TableCell>{product.category}</TableCell>
-                    <TableCell>NPR {product.price.toLocaleString()}</TableCell>
                     <TableCell>
-                      <Badge variant={product.inStock ? "default" : "destructive"}>
-                        {product.inStock ? "In Stock" : "Out of Stock"}
-                      </Badge>
+                      {product.variants && product.variants.length > 0 ? (
+                        <div className="text-sm">
+                          NPR {Math.min(...product.variants.map(v => v.price)).toLocaleString()} - 
+                          NPR {Math.max(...product.variants.map(v => v.price)).toLocaleString()}
+                        </div>
+                      ) : (
+                        <div>NPR {product.price.toLocaleString()}</div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {product.variants && product.variants.length > 0 ? (
+                        <div className="space-y-1">
+                          {product.variants.slice(0, 2).map((variant) => {
+                            const status = getVariantStockStatus(product.id, variant.id)
+                            return (
+                              <Badge 
+                                key={variant.id}
+                                variant="secondary"
+                                className={`text-xs mr-1 ${
+                                  status === 'in_stock' ? 'bg-green-100 text-green-700' :
+                                  status === 'low_stock' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}
+                              >
+                                {variant.size}: {variant.stock}
+                              </Badge>
+                            )
+                          })}
+                          {product.variants.length > 2 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{product.variants.length - 2} more
+                            </Badge>
+                          )}
+                        </div>
+                      ) : (
+                        <Badge variant={product.inStock ? "default" : "destructive"}>
+                          {product.inStock ? "In Stock" : "Out of Stock"}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {product.variants && product.variants.length > 0 ? (
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            <Boxes className="h-3 w-3 mr-1" />
+                            {product.variants.length} variants
+                          </Badge>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">No variants</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -188,6 +246,12 @@ export function AdminProductsPage() {
                             <Edit className="h-4 w-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
+                          {product.variants && product.variants.length > 0 && (
+                            <DropdownMenuItem>
+                              <Settings className="h-4 w-4 mr-2" />
+                              Manage Variants
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem className="text-destructive">
                             <Trash className="h-4 w-4 mr-2" />
                             Delete
