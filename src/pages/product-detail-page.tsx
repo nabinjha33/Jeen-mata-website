@@ -302,10 +302,10 @@ export function ProductDetailPage() {
                 
                 {/* Selected Packing Info */}
                 {selectedPacking && (
-                  <div className="flex items-center gap-2 text-small text-muted-foreground">
-                    <Boxes className="h-4 w-4" />
-                    <span>
-                      {quantity} {selectedPacking.label} = {quantity * selectedPacking.unitsPerPack} units total
+                  <div className="flex items-center gap-2 text-small text-muted-foreground p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <Boxes className="h-4 w-4 text-blue-600" />
+                    <span className="font-medium">
+                      {quantity} × {selectedPacking.label} = {quantity * selectedPacking.unitsPerPack} pieces total
                     </span>
                   </div>
                 )}

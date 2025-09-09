@@ -12,7 +12,7 @@ import { Badge } from "../ui/badge"
 import { ScrollArea } from "../ui/scroll-area"
 import { Separator } from "../ui/separator"
 import { DrawerForm } from "./drawer-form"
-import { ConfirmDialog } from "../ui/confirm-dialog"
+import { ConfirmDialog } from "./confirm-dialog"
 import { useAppStore } from "../../store/app-store"
 import { type ProductVariant, type VariantPacking } from "../../data/fixtures"
 

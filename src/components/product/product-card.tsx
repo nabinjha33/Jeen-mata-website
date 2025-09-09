@@ -76,7 +76,7 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
   }
 
   return (
-    <Card className="group overflow-hidden hover-lift transition-all duration-300 flex flex-col h-full">
+    <Card className="group overflow-hidden hover-lift transition-all duration-300 flex flex-col h-full min-h-[440px]">
       <CardContent className="p-0 flex-1 flex flex-col">
         <div className="relative aspect-square overflow-hidden">
           <ImageWithFallback
@@ -166,9 +166,12 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                 
                 {/* Packing Indicator */}
                 {mainPacking && (
-                  <div className="flex items-center gap-1 text-caption text-muted-foreground">
+                  <div 
+                    className="flex items-center gap-1 text-caption text-muted-foreground"
+                    title={`Primary packing: ${mainPacking.label} (${mainPacking.unitsPerPack} pieces per pack)`}
+                  >
                     <Package className="h-3 w-3" />
-                    <span>{mainPacking.label} ({mainPacking.unitsPerPack} pcs)</span>
+                    <span>{mainPacking.label} ({mainPacking.unitsPerPack})</span>
                   </div>
                 )}
               </div>
