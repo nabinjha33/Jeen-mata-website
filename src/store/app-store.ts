@@ -10,20 +10,17 @@ import {
   mockAdminSettings,
   mockAdminActivity,
   type Product,
+  type ProductVariant,
+  type PackingOption,
   type Category,
   type Brand,
   type User,
   type Inquiry,
+  type InquiryItem,
   type Shipment,
   type AdminSettings,
   type AdminActivity
 } from '../data/fixtures'
-
-interface InquiryItem {
-  productId: string
-  quantity: number
-  notes?: string
-}
 
 interface AppStore {
   // Data
@@ -75,6 +72,10 @@ interface AppStore {
   getCategoryById: (id: string) => Category | undefined
   getBrandById: (id: string) => Brand | undefined
   getUserById: (id: string) => User | undefined
+  getProductVariantById: (productId: string, variantId: string) => ProductVariant | undefined
+  getPackingOptionById: (productId: string, variantId: string, packingId: string) => PackingOption | undefined
+  getVariantStockStatus: (productId: string, variantId: string) => 'in_stock' | 'low_stock' | 'out_of_stock'
+  calculateTotalPieces: (quantity: number, packingOptionId: string, productId: string, variantId?: string) => number
   getAdminKPIs: () => {
     totalProducts: number
     inquiriesThisWeek: number
@@ -110,7 +111,12 @@ export const useAppStore = create<AppStore>()(
       setCurrentUser: (user) => set({ currentUser: user }),
       
       addToInquiryCart: (item) => set((state) => {
-        const existingIndex = state.inquiryCart.findIndex(i => i.productId === item.productId)
+        const existingIndex = state.inquiryCart.findIndex(i => 
+          i.productId === item.productId && 
+          i.variantId === item.variantId &&
+          i.packingOptionId === item.packingOptionId
+        )
+        
         if (existingIndex >= 0) {
           const updated = [...state.inquiryCart]
           updated[existingIndex] = {
@@ -120,7 +126,19 @@ export const useAppStore = create<AppStore>()(
           }
           return { inquiryCart: updated }
         }
-        return { inquiryCart: [...state.inquiryCart, item] }
+        
+        // Calculate total pieces for new item
+        const { calculateTotalPieces } = get()
+        const totalPieces = item.packingOptionId ? 
+          calculateTotalPieces(item.quantity, item.packingOptionId, item.productId, item.variantId) : 
+          item.quantity
+        
+        return { 
+          inquiryCart: [...state.inquiryCart, { 
+            ...item, 
+            totalPieces 
+          }] 
+        }
       }),
       
       removeFromInquiryCart: (productId) => set((state) => ({
@@ -246,6 +264,41 @@ export const useAppStore = create<AppStore>()(
         if (!currentUser) return false
         if (currentUser.role === 'owner') return true
         return currentUser.permissions?.includes(permission) || false
+      },
+
+      getProductVariantById: (productId, variantId) => {
+        const { products } = get()
+        const product = products.find(p => p.id === productId)
+        return product?.variants?.find(v => v.id === variantId)
+      },
+
+      getPackingOptionById: (productId, variantId, packingId) => {
+        const { getProductVariantById } = get()
+        const variant = getProductVariantById(productId, variantId)
+        return variant?.packingOptions.find(po => po.id === packingId)
+      },
+
+      getVariantStockStatus: (productId, variantId) => {
+        const { getProductVariantById, adminSettings } = get()
+        const variant = getProductVariantById(productId, variantId)
+        
+        if (!variant) return 'out_of_stock'
+        
+        const lowThreshold = adminSettings.catalog.lowStockThreshold
+        const outThreshold = adminSettings.catalog.outOfStockThreshold
+        
+        if (variant.stock <= outThreshold) return 'out_of_stock'
+        if (variant.stock <= lowThreshold) return 'low_stock'
+        return 'in_stock'
+      },
+
+      calculateTotalPieces: (quantity, packingOptionId, productId, variantId) => {
+        const { getPackingOptionById } = get()
+        
+        if (!variantId || !packingOptionId) return quantity
+        
+        const packingOption = getPackingOptionById(productId, variantId, packingOptionId)
+        return packingOption ? quantity * packingOption.unitsPerPack : quantity
       },
 
       getAdminKPIs: () => {
