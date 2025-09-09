@@ -1,22 +1,21 @@
 // Mock data fixtures for Jeen Mata Impex
 
-export interface VariantPacking {
+export interface PackingOption {
   id: string
-  label: string
+  type: "piece" | "box" | "carton"
   unitsPerPack: number
+  label: string // e.g., "Box(25)", "Carton(12×Box)"
+  notes?: string
 }
 
 export interface ProductVariant {
   id: string
-  sizeLabel: string
-  priceCents?: number
-  stockState: 'IN' | 'LOW' | 'OUT'
-  packings?: VariantPacking[]
-  // Legacy fields for compatibility
-  sku?: string
-  stock?: number
-  price?: number
-  unit?: string
+  size: string // e.g., "4\"", "6\"", "8\""
+  sku: string
+  stock: number
+  price: number
+  unit: string // e.g., "pc", "m", "kg"
+  packingOptions: PackingOption[]
 }
 
 export interface Product {
@@ -235,49 +234,39 @@ export const mockProducts: Product[] = [
     variants: [
       {
         id: "1-10mm",
-        sizeLabel: "10mm",
-        priceCents: 850000,
-        stockState: 'IN',
-        packings: [
-          { id: "1-10-piece", label: "Piece", unitsPerPack: 1 },
-          { id: "1-10-box", label: "Box (5)", unitsPerPack: 5 }
-        ],
-        // Legacy compatibility
+        size: "10mm",
         sku: "BSH-GSB-10",
         stock: 15,
         price: 8500,
-        unit: "pc"
+        unit: "pc",
+        packingOptions: [
+          { id: "1-10-piece", type: "piece", unitsPerPack: 1, label: "Unit", notes: "Individual unit" },
+          { id: "1-10-box", type: "box", unitsPerPack: 5, label: "Box(5)", notes: "5 units per box" }
+        ]
       },
       {
         id: "1-13mm",
-        sizeLabel: "13mm",
-        priceCents: 920000,
-        stockState: 'LOW',
-        packings: [
-          { id: "1-13-piece", label: "Piece", unitsPerPack: 1 },
-          { id: "1-13-box", label: "Box (4)", unitsPerPack: 4 }
-        ],
-        // Legacy compatibility
+        size: "13mm", 
         sku: "BSH-GSB-13",
         stock: 8,
         price: 9200,
-        unit: "pc"
+        unit: "pc",
+        packingOptions: [
+          { id: "1-13-piece", type: "piece", unitsPerPack: 1, label: "Unit", notes: "Individual unit" },
+          { id: "1-13-box", type: "box", unitsPerPack: 4, label: "Box(4)", notes: "4 units per box" }
+        ]
       },
       {
         id: "1-16mm",
-        sizeLabel: "16mm",
-        priceCents: 1050000,
-        stockState: 'OUT',
-        packings: [
-          { id: "1-16-piece", label: "Piece", unitsPerPack: 1 },
-          { id: "1-16-box", label: "Box (3)", unitsPerPack: 3 },
-          { id: "1-16-carton", label: "Carton (12×Box)", unitsPerPack: 36 }
-        ],
-        // Legacy compatibility
+        size: "16mm",
         sku: "BSH-GSB-16", 
         stock: 3,
         price: 10500,
-        unit: "pc"
+        unit: "pc",
+        packingOptions: [
+          { id: "1-16-piece", type: "piece", unitsPerPack: 1, label: "Unit", notes: "Individual unit" },
+          { id: "1-16-box", type: "box", unitsPerPack: 3, label: "Box(3)", notes: "3 units per box" }
+        ]
       }
     ]
   },
@@ -319,50 +308,41 @@ export const mockProducts: Product[] = [
     variants: [
       {
         id: "3-3m",
-        sizeLabel: "3m",
-        priceCents: 35000,
-        stockState: 'IN',
-        packings: [
-          { id: "3-3-piece", label: "Piece", unitsPerPack: 1 },
-          { id: "3-3-box", label: "Box (12)", unitsPerPack: 12 },
-          { id: "3-3-carton", label: "Carton (12×Box)", unitsPerPack: 144 }
-        ],
-        // Legacy compatibility
+        size: "3m",
         sku: "STN-TAPE-3M",
         stock: 25,
         price: 350,
-        unit: "pc"
+        unit: "pc",
+        packingOptions: [
+          { id: "3-3-piece", type: "piece", unitsPerPack: 1, label: "Unit" },
+          { id: "3-3-box", type: "box", unitsPerPack: 12, label: "Box(12)", notes: "12 pieces per box" },
+          { id: "3-3-carton", type: "carton", unitsPerPack: 144, label: "Carton(12×Box)", notes: "12 boxes per carton" }
+        ]
       },
       {
         id: "3-5m", 
-        sizeLabel: "5m",
-        priceCents: 45000,
-        stockState: 'IN',
-        packings: [
-          { id: "3-5-piece", label: "Piece", unitsPerPack: 1 },
-          { id: "3-5-box", label: "Box (10)", unitsPerPack: 10 },
-          { id: "3-5-carton", label: "Carton (12×Box)", unitsPerPack: 120 }
-        ],
-        // Legacy compatibility
+        size: "5m",
         sku: "STN-TAPE-5M",
         stock: 18,
         price: 450,
-        unit: "pc"
+        unit: "pc",
+        packingOptions: [
+          { id: "3-5-piece", type: "piece", unitsPerPack: 1, label: "Unit" },
+          { id: "3-5-box", type: "box", unitsPerPack: 10, label: "Box(10)", notes: "10 pieces per box" },
+          { id: "3-5-carton", type: "carton", unitsPerPack: 120, label: "Carton(12×Box)", notes: "12 boxes per carton" }
+        ]
       },
       {
         id: "3-8m",
-        sizeLabel: "8m",
-        priceCents: 65000,
-        stockState: 'LOW',
-        packings: [
-          { id: "3-8-piece", label: "Piece", unitsPerPack: 1 },
-          { id: "3-8-box", label: "Box (6)", unitsPerPack: 6 }
-        ],
-        // Legacy compatibility
+        size: "8m",
         sku: "STN-TAPE-8M",
         stock: 5,
         price: 650,
-        unit: "pc"
+        unit: "pc",
+        packingOptions: [
+          { id: "3-8-piece", type: "piece", unitsPerPack: 1, label: "Unit" },
+          { id: "3-8-box", type: "box", unitsPerPack: 6, label: "Box(6)", notes: "6 pieces per box" }
+        ]
       }
     ]
   },

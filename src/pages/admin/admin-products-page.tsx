@@ -28,7 +28,6 @@ import { useAppStore } from "../../store/app-store"
 import { useAdminStore } from "../../stores/admin-store"
 import { DrawerForm } from "../../components/admin/drawer-form"
 import { ConfirmDialog } from "../../components/admin/confirm-dialog"
-import { VariantsManagementDrawer } from "../../components/admin/variants-management-drawer"
 import type { Product } from "../../data/fixtures"
 
 export function AdminProductsPage() {
@@ -625,12 +624,30 @@ export function AdminProductsPage() {
         isLoading={isLoading}
       />
 
-      {/* Variants Management Drawer */}
-      <VariantsManagementDrawer
-        open={!!showVariantsDrawer}
-        onClose={() => setShowVariantsDrawer(null)}
-        productId={showVariantsDrawer}
-      />
+      {/* Variants Management Drawer - Placeholder */}
+      {showVariantsDrawer && (
+        <DrawerForm
+          open={!!showVariantsDrawer}
+          onClose={() => setShowVariantsDrawer(null)}
+          title="Manage Variants"
+          onSubmit={(e) => { e.preventDefault(); setShowVariantsDrawer(null) }}
+          submitText="Done"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Variants management interface will be implemented here.
+            </p>
+            <div className="p-4 border rounded-lg">
+              <h4 className="font-medium mb-2">Variant Features:</h4>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>• Size, Unit, Stock, Price, SKU management</li>
+                <li>• Add/Edit/Delete variants</li>
+                <li>• Packing options per variant</li>
+              </ul>
+            </div>
+          </div>
+        </DrawerForm>
+      )}
     </div>
   )
 }

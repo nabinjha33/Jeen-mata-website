@@ -55,8 +55,8 @@ export function ProductDetailPage() {
       if (defaultVariant) {
         setSelectedVariantId(defaultVariant.id)
         // Auto-select first packing option
-        const defaultPacking = defaultVariant.packings?.find(p => p.unitsPerPack === 1) || 
-                              defaultVariant.packings?.[0]
+        const defaultPacking = defaultVariant.packingOptions.find(po => po.type === 'piece') || 
+                              defaultVariant.packingOptions[0]
         if (defaultPacking) {
           setSelectedPackingOptionId(defaultPacking.id)
         }
@@ -79,10 +79,10 @@ export function ProductDetailPage() {
   const stockStatus = getStockStatus()
   const isInStock = stockStatus !== 'out_of_stock'
   
-  // Get current packings
-  const currentPackings = currentVariant?.packings || []
-  const selectedPacking = selectedPackingOptionId 
-    ? currentPackings.find(p => p.id === selectedPackingOptionId)
+  // Get current packing options
+  const currentPackingOptions = currentVariant?.packingOptions || []
+  const selectedPackingOption = selectedPackingOptionId 
+    ? currentPackingOptions.find(po => po.id === selectedPackingOptionId)
     : null
 
   // Get related products (same category, different product)
@@ -121,7 +121,7 @@ export function ProductDetailPage() {
       notes: inquiryNotes || undefined
     })
     
-    const variantInfo = currentVariant ? ` (${currentVariant.sizeLabel})` : ''
+    const variantInfo = currentVariant ? ` (${currentVariant.size})` : ''
     toast.success(`${product.name}${variantInfo} added to inquiry cart`, { duration: 1500 })
     setQuantity(1)
     setInquiryNotes("")
@@ -256,7 +256,7 @@ export function ProductDetailPage() {
                           return (
                             <SelectItem key={variant.id} value={variant.id}>
                               <div className="flex items-center justify-between w-full">
-                                <span>{variant.sizeLabel} - {formatCurrency(variant.price || (variant.priceCents ? variant.priceCents / 100 : 0))}</span>
+                                <span>{variant.size} - {formatCurrency(variant.price)}</span>
                                 <Badge 
                                   variant="secondary" 
                                   className={`ml-2 text-xs ${
@@ -278,7 +278,7 @@ export function ProductDetailPage() {
                   </div>
                   
                   {/* Packing Selector */}
-                  {currentPackings.length > 0 && (
+                  {currentPackingOptions.length > 0 && (
                     <div className="space-y-2">
                       <label className="text-small font-medium">Packing:</label>
                       <Select value={selectedPackingOptionId || ''} onValueChange={setSelectedPackingOptionId}>
@@ -286,7 +286,7 @@ export function ProductDetailPage() {
                           <SelectValue placeholder="Select packing" />
                         </SelectTrigger>
                         <SelectContent>
-                          {currentPackings.map((packing) => (
+                          {currentPackingOptions.map((packing) => (
                             <SelectItem key={packing.id} value={packing.id}>
                               <div className="flex items-center gap-2">
                                 <Package className="h-4 w-4" />
@@ -301,11 +301,11 @@ export function ProductDetailPage() {
                 </div>
                 
                 {/* Selected Packing Info */}
-                {selectedPacking && (
-                  <div className="flex items-center gap-2 text-small text-muted-foreground p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <Boxes className="h-4 w-4 text-blue-600" />
-                    <span className="font-medium">
-                      {quantity} × {selectedPacking.label} = {quantity * selectedPacking.unitsPerPack} pieces total
+                {selectedPackingOption && (
+                  <div className="flex items-center gap-2 text-small text-muted-foreground">
+                    <Boxes className="h-4 w-4" />
+                    <span>
+                      {quantity} {selectedPackingOption.label} = {quantity * selectedPackingOption.unitsPerPack} units total
                     </span>
                   </div>
                 )}

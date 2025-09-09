@@ -48,35 +48,34 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
   const stockStatus = getStockStatus()
   const isInStock = stockStatus !== 'out_of_stock'
   
-  // Get main packing for display
-  const getMainPacking = () => {
-    if (hasVariants && currentVariant && currentVariant.packings) {
-      // Find piece packing first, or use the first one
-      const mainPacking = currentVariant.packings.find(p => p.unitsPerPack === 1) || 
-                         currentVariant.packings[0]
+  // Get main packing option for display
+  const getMainPackingOption = () => {
+    if (hasVariants && currentVariant) {
+      const mainPacking = currentVariant.packingOptions.find(po => po.type === 'piece') || 
+                         currentVariant.packingOptions[0]
       return mainPacking
     }
     return null
   }
 
-  const mainPacking = getMainPacking()
+  const mainPackingOption = getMainPackingOption()
 
   const handleAddToCart = () => {
-    const defaultPacking = hasVariants && currentVariant && currentVariant.packings
-      ? currentVariant.packings.find(p => p.unitsPerPack === 1) || currentVariant.packings[0]
+    const defaultPackingOption = hasVariants && currentVariant 
+      ? currentVariant.packingOptions.find(po => po.type === 'piece') || currentVariant.packingOptions[0]
       : null
 
     addToInquiryCart({
       productId: product.id,
       variantId: selectedVariantId || undefined,
-      packingOptionId: defaultPacking?.id || undefined,
+      packingOptionId: defaultPackingOption?.id || undefined,
       quantity: 1,
     })
     toast.success(t('addToCart'), { duration: 1500 }) // Show for 1.5 seconds instead of default
   }
 
   return (
-    <Card className="group overflow-hidden hover-lift transition-all duration-300 flex flex-col h-full min-h-[440px]">
+    <Card className="group overflow-hidden hover-lift transition-all duration-300 flex flex-col h-full">
       <CardContent className="p-0 flex-1 flex flex-col">
         <div className="relative aspect-square overflow-hidden">
           <ImageWithFallback
@@ -133,7 +132,7 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                   <SelectContent>
                     {product.variants?.map((variant) => (
                       <SelectItem key={variant.id} value={variant.id}>
-                        {variant.sizeLabel} - {formatCurrency(variant.price || variant.priceCents ? variant.priceCents! / 100 : 0)}
+                        {variant.size} - {formatCurrency(variant.price)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -165,13 +164,10 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                 </Badge>
                 
                 {/* Packing Indicator */}
-                {mainPacking && (
-                  <div 
-                    className="flex items-center gap-1 text-caption text-muted-foreground"
-                    title={`Primary packing: ${mainPacking.label} (${mainPacking.unitsPerPack} pieces per pack)`}
-                  >
+                {mainPackingOption && (
+                  <div className="flex items-center gap-1 text-caption text-muted-foreground">
                     <Package className="h-3 w-3" />
-                    <span>{mainPacking.label} ({mainPacking.unitsPerPack})</span>
+                    <span>{mainPackingOption.label}</span>
                   </div>
                 )}
               </div>
