@@ -1,16 +1,36 @@
 // Mock data fixtures for Jeen Mata Impex
 
+export interface PackingOption {
+  id: string
+  type: "piece" | "box" | "carton"
+  unitsPerPack: number
+  label: string // e.g., "Box(25)", "Carton(12×Box)"
+  notes?: string
+}
+
+export interface ProductVariant {
+  id: string
+  size: string // e.g., "4\"", "6\"", "8\""
+  sku: string
+  stock: number
+  price: number
+  unit: string // e.g., "pc", "m", "kg"
+  packingOptions: PackingOption[]
+}
+
 export interface Product {
   id: string
   name: string
   description: string
-  price: number
+  price: number // Base price or main variant price
   category: string
   brand: string
   imageUrl: string
   inStock: boolean
   specifications: Record<string, string>
   sku: string
+  variants?: ProductVariant[] // Empty array if no variants
+  defaultVariantId?: string // ID of the default/main variant
 }
 
 export interface Category {
@@ -43,30 +63,46 @@ export interface User {
   avatar?: string
 }
 
+export interface InquiryItem {
+  productId: string
+  variantId?: string // Selected variant (size)
+  packingOptionId?: string // Selected packing option
+  quantity: number // Number of packs
+  totalPieces?: number // Auto-calculated: quantity × unitsPerPack
+  unitPrice?: number // Price per unit/pack
+  notes?: string
+}
+
 export interface Inquiry {
   id: string
   userId: string
-  products: Array<{
-    productId: string
-    quantity: number
-    notes?: string
-  }>
+  products: InquiryItem[]
   status: "pending" | "responded" | "closed"
   createdAt: Date
   updatedAt: Date
   customerNotes?: string
 }
 
+export interface ShipmentManifestItem {
+  productId: string
+  variantId?: string
+  packingOptionId?: string
+  quantity: number
+  totalPieces: number
+}
+
 export interface Shipment {
   id: string
-  inquiryId: string
+  referenceNumber: string // New: Shipment reference number
+  inquiryId?: string // Made optional - not all shipments tied to inquiries
   trackingNumber: string
-  status: "preparing" | "shipped" | "in_transit" | "delivered"
+  status: "booked" | "in_transit" | "customs" | "warehouse" | "available" | "delivered"
   estimatedDelivery: Date
   actualDelivery?: Date
   carrier: string
   origin?: string
   destination?: string
+  notes?: string // New: Editable notes field
   timeline?: Array<{
     id: string
     status: string
@@ -74,10 +110,7 @@ export interface Shipment {
     location?: string
     notes?: string
   }>
-  manifestItems?: Array<{
-    productId: string
-    quantity: number
-  }>
+  manifestItems: ShipmentManifestItem[] // Enhanced manifest with variants
 }
 
 export interface AdminSettings {
@@ -183,21 +216,59 @@ export const mockBrands: Brand[] = [
 export const mockProducts: Product[] = [
   {
     id: "1",
-    name: "Bosch GSB 550 Impact Drill",
-    description: "13mm impact drill with variable speed control, perfect for drilling in concrete, metal, and wood.",
+    name: "Bosch GSB Impact Drill",
+    description: "Professional impact drill with variable speed control, perfect for drilling in concrete, metal, and wood.",
     price: 8500,
     category: "Power Tools",
     brand: "Bosch",
     imageUrl: "https://images.unsplash.com/photo-1755168648692-ef8937b7e63e?w=400&h=300",
     inStock: true,
-    sku: "BSH-GSB550",
+    sku: "BSH-GSB",
+    defaultVariantId: "1-10mm",
     specifications: {
       "Power": "550W",
-      "Chuck Size": "13mm",
       "No Load Speed": "0-3000 rpm",
       "Impact Rate": "0-48000 bpm",
       "Weight": "1.8 kg",
     },
+    variants: [
+      {
+        id: "1-10mm",
+        size: "10mm",
+        sku: "BSH-GSB-10",
+        stock: 15,
+        price: 8500,
+        unit: "pc",
+        packingOptions: [
+          { id: "1-10-piece", type: "piece", unitsPerPack: 1, label: "Piece", notes: "Individual unit" },
+          { id: "1-10-box", type: "box", unitsPerPack: 5, label: "Box(5)", notes: "5 units per box" }
+        ]
+      },
+      {
+        id: "1-13mm",
+        size: "13mm", 
+        sku: "BSH-GSB-13",
+        stock: 8,
+        price: 9200,
+        unit: "pc",
+        packingOptions: [
+          { id: "1-13-piece", type: "piece", unitsPerPack: 1, label: "Piece", notes: "Individual unit" },
+          { id: "1-13-box", type: "box", unitsPerPack: 4, label: "Box(4)", notes: "4 units per box" }
+        ]
+      },
+      {
+        id: "1-16mm",
+        size: "16mm",
+        sku: "BSH-GSB-16", 
+        stock: 3,
+        price: 10500,
+        unit: "pc",
+        packingOptions: [
+          { id: "1-16-piece", type: "piece", unitsPerPack: 1, label: "Piece", notes: "Individual unit" },
+          { id: "1-16-box", type: "box", unitsPerPack: 3, label: "Box(3)", notes: "3 units per box" }
+        ]
+      }
+    ]
   },
   {
     id: "2",
@@ -219,21 +290,61 @@ export const mockProducts: Product[] = [
   },
   {
     id: "3",
-    name: "Stanley 25mm x 5m Measuring Tape",
+    name: "Stanley Measuring Tape",
     description: "Durable measuring tape with easy-to-read markings and sturdy construction.",
     price: 450,
     category: "Hand Tools",
     brand: "Stanley",
     imageUrl: "https://images.unsplash.com/photo-1721250527686-9b31f11bfe3e?w=400&h=300",
     inStock: true,
-    sku: "STN-25MM5M",
+    sku: "STN-TAPE",
+    defaultVariantId: "3-5m",
     specifications: {
-      "Length": "5m",
       "Width": "25mm",
       "Case Material": "ABS Plastic",
       "Blade Material": "Steel",
       "Accuracy": "±2mm/5m",
     },
+    variants: [
+      {
+        id: "3-3m",
+        size: "3m",
+        sku: "STN-TAPE-3M",
+        stock: 25,
+        price: 350,
+        unit: "pc",
+        packingOptions: [
+          { id: "3-3-piece", type: "piece", unitsPerPack: 1, label: "Piece" },
+          { id: "3-3-box", type: "box", unitsPerPack: 12, label: "Box(12)", notes: "12 pieces per box" },
+          { id: "3-3-carton", type: "carton", unitsPerPack: 144, label: "Carton(12×Box)", notes: "12 boxes per carton" }
+        ]
+      },
+      {
+        id: "3-5m", 
+        size: "5m",
+        sku: "STN-TAPE-5M",
+        stock: 18,
+        price: 450,
+        unit: "pc",
+        packingOptions: [
+          { id: "3-5-piece", type: "piece", unitsPerPack: 1, label: "Piece" },
+          { id: "3-5-box", type: "box", unitsPerPack: 10, label: "Box(10)", notes: "10 pieces per box" },
+          { id: "3-5-carton", type: "carton", unitsPerPack: 120, label: "Carton(12×Box)", notes: "12 boxes per carton" }
+        ]
+      },
+      {
+        id: "3-8m",
+        size: "8m",
+        sku: "STN-TAPE-8M",
+        stock: 5,
+        price: 650,
+        unit: "pc",
+        packingOptions: [
+          { id: "3-8-piece", type: "piece", unitsPerPack: 1, label: "Piece" },
+          { id: "3-8-box", type: "box", unitsPerPack: 6, label: "Box(6)", notes: "6 pieces per box" }
+        ]
+      }
+    ]
   },
   {
     id: "4",
