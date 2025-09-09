@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { ShoppingCart, Trash2, Plus, Minus, MessageCircle } from "lucide-react"
+import { ShoppingCart, Trash2, Plus, Minus, MessageCircle, Package, Boxes } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Input } from "../components/ui/input"
@@ -21,6 +21,9 @@ export function InquiryCartPage() {
     inquiryCart, 
     products, 
     getProductById,
+    getProductVariantById,
+    getPackingOptionById,
+    calculateTotalPieces,
     updateInquiryCartItem, 
     removeFromInquiryCart,
     clearInquiryCart
@@ -39,15 +42,32 @@ export function InquiryCartPage() {
   const [showInquiryForm, setShowInquiryForm] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  // Get cart items with product details
-  const cartItems = inquiryCart.map(item => ({
-    ...item,
-    product: getProductById(item.productId)!
-  })).filter(item => item.product)
+  // Get cart items with product details, variants, and packing
+  const cartItems = inquiryCart.map(item => {
+    const product = getProductById(item.productId)
+    const variant = item.variantId ? getProductVariantById(item.productId, item.variantId) : null
+    const packingOption = item.packingOptionId && item.variantId 
+      ? getPackingOptionById(item.productId, item.variantId, item.packingOptionId) 
+      : null
+    
+    const totalPieces = item.totalPieces || item.quantity
+    
+    return {
+      ...item,
+      product: product!,
+      variant,
+      packingOption,
+      totalPieces
+    }
+  }).filter(item => item.product)
 
   // Calculate totals
   const totalItems = inquiryCart.reduce((sum, item) => sum + item.quantity, 0)
-  const totalValue = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+  const totalPieces = cartItems.reduce((sum, item) => sum + item.totalPieces, 0)
+  const totalValue = cartItems.reduce((sum, item) => {
+    const price = item.variant?.price || item.product.price
+    return sum + (price * item.quantity)
+  }, 0)
 
   const updateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -130,7 +150,7 @@ export function InquiryCartPage() {
         <div>
           <h1 className="text-h1 font-semibold">{t('inquiryCart_title')}</h1>
           <p className="text-muted-foreground">
-            {totalItems} item{totalItems !== 1 ? 's' : ''} in your inquiry
+            {totalItems} item{totalItems !== 1 ? 's' : ''} • {totalPieces} pieces total
           </p>
         </div>
         
@@ -163,14 +183,37 @@ export function InquiryCartPage() {
                   
                   <div className="flex-1 space-y-4">
                     <div className="flex justify-between">
-                      <div>
+                      <div className="space-y-2">
                         <h3 className="font-medium">{item.product.name}</h3>
-                        <p className="text-small text-muted-foreground">
-                          {item.product.brand} • SKU: {item.product.sku}
-                        </p>
-                        <p className="text-small text-primary font-semibold">
-                          {formatCurrency(item.product.price)} each
-                        </p>
+                        <div className="space-y-1">
+                          <p className="text-small text-muted-foreground">
+                            {item.product.brand} • SKU: {item.variant?.sku || item.product.sku}
+                          </p>
+                          
+                          {/* Variant Information */}
+                          {item.variant && (
+                            <div className="flex items-center gap-2">
+                              <Package className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-small text-muted-foreground">
+                                Size: {item.variant.size}
+                              </span>
+                            </div>
+                          )}
+                          
+                          {/* Packing Information */}
+                          {item.packingOption && (
+                            <div className="flex items-center gap-2">
+                              <Boxes className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-small text-muted-foreground">
+                                {item.packingOption.label} ({item.packingOption.unitsPerPack} pcs)
+                              </span>
+                            </div>
+                          )}
+                          
+                          <p className="text-small text-primary font-semibold">
+                            {formatCurrency(item.variant?.price || item.product.price)} each
+                          </p>
+                        </div>
                       </div>
                       
                       <Button
@@ -207,8 +250,15 @@ export function InquiryCartPage() {
                         </Button>
                       </div>
                       
-                      <div className="font-semibold">
-                        {formatCurrency(item.product.price * item.quantity)}
+                      <div className="text-right">
+                        <div className="font-semibold">
+                          {formatCurrency((item.variant?.price || item.product.price) * item.quantity)}
+                        </div>
+                        {item.totalPieces > item.quantity && (
+                          <div className="text-small text-muted-foreground">
+                            {item.totalPieces} pieces total
+                          </div>
+                        )}
                       </div>
                     </div>
                     
@@ -243,13 +293,24 @@ export function InquiryCartPage() {
                 <span>{totalItems}</span>
               </div>
               <div className="flex justify-between">
+                <span>Total Pieces:</span>
+                <span className="font-medium">{totalPieces}</span>
+              </div>
+              <div className="flex justify-between">
                 <span>Estimated Value:</span>
                 <span className="font-semibold">{formatCurrency(totalValue)}</span>
               </div>
               <Separator />
-              <p className="text-small text-muted-foreground">
-                Final prices will be provided in our quote response.
-              </p>
+              <div className="space-y-2">
+                <p className="text-small text-muted-foreground">
+                  Final prices will be provided in our quote response.
+                </p>
+                {totalPieces > totalItems && (
+                  <p className="text-small text-muted-foreground">
+                    * Total pieces include packing calculations
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
 
