@@ -256,7 +256,7 @@ export function AdminShipmentsPage() {
                   : 'Get started by creating your first consignment'
                 }
               </p>
-              {!searchQuery && stageFilter === 'ALL' && (
+              {(!searchQuery && stageFilter === 'ALL') && (
                 <Button onClick={() => setShowAddConsignment(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add Consignment
