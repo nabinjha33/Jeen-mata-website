@@ -34,6 +34,7 @@ export function InquiryCartPage() {
     companyName: '',
     phone: '',
     email: '',
+    whatsapp: '',
     city: '',
     preferredContact: 'email' as 'phone' | 'email',
     message: ''
@@ -92,6 +93,15 @@ export function InquiryCartPage() {
     if (!customerDetails.phone.trim()) {
       newErrors.phone = 'Phone is required'
     }
+
+    // WhatsApp validation (optional but recommended)
+    if (customerDetails.whatsapp && customerDetails.whatsapp.trim()) {
+      const whatsappClean = customerDetails.whatsapp.replace(/[\s\-\(\)]/g, '')
+      if (!/^\+?\d{8,15}$/.test(whatsappClean)) {
+        newErrors.whatsapp = 'Please enter a valid WhatsApp number with country code'
+      }
+    }
+
     if (!customerDetails.email.trim()) {
       newErrors.email = 'Email is required'
     } else if (!/\S+@\S+\.\S+/.test(customerDetails.email)) {
@@ -392,6 +402,24 @@ export function InquiryCartPage() {
                 {errors.phone && (
                   <p className="text-small text-danger">{errors.phone}</p>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp">WhatsApp Number (recommended)</Label>
+                <Input
+                  id="whatsapp"
+                  type="tel"
+                  placeholder="+977 98XXXXXXXX"
+                  value={customerDetails.whatsapp || ''}
+                  onChange={(e) => setCustomerDetails(prev => ({ ...prev, whatsapp: e.target.value }))}
+                  error={errors.whatsapp}
+                />
+                {errors.whatsapp && (
+                  <p className="text-small text-danger">{errors.whatsapp}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  We'll use this to send a confirmation on WhatsApp. Include country code (+977 for Nepal).
+                </p>
               </div>
               
               <div className="space-y-2">

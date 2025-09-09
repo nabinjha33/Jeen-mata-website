@@ -1,0 +1,185 @@
+Scope: UI only. Keep current design system. Use fixtures or a tiny client store (Zustand/Context) so buttons actually do something without a backend.
+
+0) Guardrails
+
+If any page relies on data, use mock data from /data/fixtures/*.json or a small client store so the UI never renders blank.
+
+All interactive pages are client components (add 'use client' where needed).
+
+Every action must show loading/disabled states, success/error toasts, and a11y labels.
+
+1) Admin → Products
+
+Make “Add Product” work
+
+Add a primary button “Add Product” on /admin/products.
+
+Click opens a Drawer (or Modal) with a validated form:
+
+Fields: Name*, Brand*, Category, Stock State, Price (optional), Tags, Images (UI only).
+
+On submit: add to client store (or fixtures array in memory) → close drawer → toast “Product created”.
+
+Scroll to/flash the new row in the table.
+
+Fix row Action buttons
+
+In the “All products” table, wire these actions in each row:
+
+View → navigates to /products/[slug] (public detail) in a new tab.
+
+Edit → opens the same Drawer prefilled; on save, update the row.
+
+Manage Variants → opens a Variants drawer/page (UI only):
+
+Table: Size, Unit, Stock, Price, SKU, Actions (Edit/Delete).
+
+“+ Add Variant” shows mini form; updates local store.
+
+Disable actions while a mutation is “in progress”; show inline errors if validation fails.
+
+2) Admin → Brands
+
+Make “Add Brand” work
+
+Add a primary button “Add Brand” on /admin/brands.
+
+Drawer fields: Brand Name*, Slug (auto from name, editable), Color, Featured toggle, Logo (UI only), Description.
+
+On submit: append to local store → table re-renders → toast “Brand added”.
+
+Row actions
+
+Edit → same drawer, prefilled.
+
+Delete → confirm dialog; if product count > 0, show toast “Cannot delete a brand with products” (UI rule only).
+
+3) Admin → Inquiries
+
+Fix row Action buttons
+
+In /admin/inquiries table, for each row add working actions:
+
+View details → side Drawer with:
+
+Customer info (Name, Phone, WhatsApp if present, Email, City)
+
+Items list (Product, Variant, Packing, Qty)
+
+Internal Notes (textarea, local-only)
+
+Status badge
+
+Respond → open a small “Respond” dialog:
+
+Buttons: mailto: (prefill subject/body), tel: (call), and https://wa.me/<phone>?text=<encoded message> (prefill WhatsApp message). Use the inquiry’s structured summary for the message (UI-only).
+
+Mark as Closed → sets status = CLOSED in local store → update badge; toast “Inquiry closed”.
+
+Filters/tabs: New | Open | Closed; keep URL sync ?status=OPEN.
+
+4) Public → Inquiry Form
+
+Add WhatsApp number input
+
+In the customer details step, add:
+
+WhatsApp Number (optional but recommended):
+
+Input mask: +977 98XXXXXXXX (allow +country code)
+
+Validation: 8–15 digits (after stripping spaces), start with + allowed.
+
+Help text: “We’ll use this to send a confirmation on WhatsApp.”
+
+On submit (UI-only): include whatsapp in the payload preview/confirmation screen.
+
+5) Layout Resizing / Jank Fix (CLS & “unprofessional” jumps)
+
+Apply these UI-only stabilizers across pages:
+
+Images & Cards
+
+Reserve space: add fixed aspect-ratio (e.g., aspect-[4/3] or CSS aspect-ratio: 4/3) on image wrappers.
+
+Use object-fit: cover; and set explicit width/height on img components.
+
+Provide skeletons with the same final height as content.
+
+Tables & Lists
+
+Use table-layout: fixed; for data tables; set explicit column widths for Icon/Actions columns.
+
+Set a min-height for table containers (e.g., 480–640px) so filters/pagination don’t jump content.
+
+Keep pagination/footer height constant.
+
+Typography & Buttons
+
+Load fonts with font-display: swap; to avoid reflow.
+
+Keep consistent button heights; don’t change size between idle/hover/active.
+
+Grids & Containers
+
+Fix container widths (max-w-screen-xl or 1200px) and consistent gap-* across sections.
+
+Add scrollbar-gutter: stable both-edges; on html or scroll containers to prevent width changes when scrollbar appears.
+
+Avoid dynamic content pushing layout: use accordions/drawers instead of inline expanding blocks in table rows.
+
+Async states
+
+Show a placeholder of equal dimensions during loading; never insert content that resizes parent without transition.
+
+For toasts/snackbars, overlay them (position fixed), not inline.
+
+6) Implementation Notes
+
+Mark interactive files with 'use client'.
+
+Centralize local state (Zustand/Context) in stores/adminStore.ts:
+
+addProduct, updateProduct, addVariant, addPacking, addBrand, updateBrand, addInquiryNote, closeInquiry.
+
+Extract shared UI:
+
+components/admin/DrawerForm.tsx, ConfirmDialog.tsx, Toast.tsx, SkeletonTable.tsx.
+
+All buttons: include aria-label and show tooltip text.
+
+Fail-safe: if a form can’t save, don’t close the drawer; show inline field errors.
+
+7) Acceptance Checklist (UI-only)
+
+Products:
+
+“Add Product” opens, validates, and creates a row without page reload.
+
+“View / Edit / Manage Variants” all open and work; variants list updates immediately.
+
+Brands:
+
+“Add Brand” creates a new row; edit/delete behave as specified.
+
+Inquiries:
+
+“View details / Respond / Mark as Closed” all work; WhatsApp link opens with prefilled message.
+
+Inquiry Form:
+
+WhatsApp number field present, validated, and included in the confirmation payload preview.
+
+Layout:
+
+No visible jumps when images load, filters change, or drawers open. Table/body width remains stable.
+
+Deliverables
+
+Updated component files for Admin Products/Brands/Inquiries pages and Public Inquiry Form.
+
+New shared components (Drawer, Confirm, Skeleton, Toast) if missing.
+
+A small stores/adminStore.ts (or equivalent) to make actions functional without backend.
+
+CSS utilities or classes added to enforce stable layout.
