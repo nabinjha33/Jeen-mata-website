@@ -48,27 +48,28 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
   const stockStatus = getStockStatus()
   const isInStock = stockStatus !== 'out_of_stock'
   
-  // Get main packing option for display
-  const getMainPackingOption = () => {
-    if (hasVariants && currentVariant) {
-      const mainPacking = currentVariant.packingOptions.find(po => po.type === 'piece') || 
-                         currentVariant.packingOptions[0]
+  // Get main packing for display
+  const getMainPacking = () => {
+    if (hasVariants && currentVariant && currentVariant.packings) {
+      // Find piece packing first, or use the first one
+      const mainPacking = currentVariant.packings.find(p => p.unitsPerPack === 1) || 
+                         currentVariant.packings[0]
       return mainPacking
     }
     return null
   }
 
-  const mainPackingOption = getMainPackingOption()
+  const mainPacking = getMainPacking()
 
   const handleAddToCart = () => {
-    const defaultPackingOption = hasVariants && currentVariant 
-      ? currentVariant.packingOptions.find(po => po.type === 'piece') || currentVariant.packingOptions[0]
+    const defaultPacking = hasVariants && currentVariant && currentVariant.packings
+      ? currentVariant.packings.find(p => p.unitsPerPack === 1) || currentVariant.packings[0]
       : null
 
     addToInquiryCart({
       productId: product.id,
       variantId: selectedVariantId || undefined,
-      packingOptionId: defaultPackingOption?.id || undefined,
+      packingOptionId: defaultPacking?.id || undefined,
       quantity: 1,
     })
     toast.success(t('addToCart'), { duration: 1500 }) // Show for 1.5 seconds instead of default
@@ -132,7 +133,7 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                   <SelectContent>
                     {product.variants?.map((variant) => (
                       <SelectItem key={variant.id} value={variant.id}>
-                        {variant.size} - {formatCurrency(variant.price)}
+                        {variant.sizeLabel} - {formatCurrency(variant.price || variant.priceCents ? variant.priceCents! / 100 : 0)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -164,10 +165,10 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                 </Badge>
                 
                 {/* Packing Indicator */}
-                {mainPackingOption && (
+                {mainPacking && (
                   <div className="flex items-center gap-1 text-caption text-muted-foreground">
                     <Package className="h-3 w-3" />
-                    <span>{mainPackingOption.label}</span>
+                    <span>{mainPacking.label} ({mainPacking.unitsPerPack} pcs)</span>
                   </div>
                 )}
               </div>
