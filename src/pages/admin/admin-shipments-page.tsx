@@ -96,48 +96,48 @@ export function AdminShipmentsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Consignments</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium">Total Consignments</CardTitle>
+            <Package className="h-3 w-3 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{shipments.length}</div>
+          <CardContent className="px-3 pb-3">
+            <div className="text-lg font-bold">{shipments.length}</div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Transit</CardTitle>
-            <Truck className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium">In Transit</CardTitle>
+            <Truck className="h-3 w-3 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <CardContent className="px-3 pb-3">
+            <div className="text-lg font-bold">
               {shipments.filter(s => ['TRANSIT', 'CUSTOMS'].includes(s.stage)).length}
             </div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium">Available</CardTitle>
+            <Calendar className="h-3 w-3 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <CardContent className="px-3 pb-3">
+            <div className="text-lg font-bold">
               {shipments.filter(s => s.stage === 'AVAILABLE').length}
             </div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Items</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium">Total Items</CardTitle>
+            <MapPin className="h-3 w-3 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <CardContent className="px-3 pb-3">
+            <div className="text-lg font-bold">
               {shipments.reduce((sum, s) => sum + s.items.length, 0)}
             </div>
           </CardContent>
