@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react"
 import { Link } from "react-router-dom"
-import { Search, Truck, Clock, Package, CheckCircle } from "lucide-react"
+import { Search, Truck, Clock, Package, CheckCircle, Ship, Plane, AlertCircle } from "lucide-react"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { Card, CardContent } from "../components/ui/card"
@@ -15,22 +15,27 @@ export function ShipmentsPage() {
   const { shipments } = useAppStore()
   const [searchQuery, setSearchQuery] = useState("")
 
-  // Filter shipments by search
+  // Filter consignments by search
   const filteredShipments = useMemo(() => {
     return shipments.filter(shipment =>
+      shipment.referenceNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       shipment.trackingNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      shipment.carrier.toLowerCase().includes(searchQuery.toLowerCase())
+      shipment.carrier.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      shipment.origin?.toLowerCase().includes(searchQuery.toLowerCase())
     )
   }, [shipments, searchQuery])
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'preparing':
+      case 'booked':
         return <Package className="h-4 w-4" />
-      case 'shipped':
       case 'in_transit':
-        return <Truck className="h-4 w-4" />
-      case 'delivered':
+        return <Ship className="h-4 w-4" />
+      case 'customs':
+        return <AlertCircle className="h-4 w-4" />
+      case 'warehouse':
+        return <Package className="h-4 w-4" />
+      case 'available':
         return <CheckCircle className="h-4 w-4" />
       default:
         return <Clock className="h-4 w-4" />
@@ -39,15 +44,29 @@ export function ShipmentsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'preparing':
-        return 'bg-warning/10 text-warning'
-      case 'shipped':
+      case 'booked':
+        return 'bg-gray-100 text-gray-800 border-gray-200'
       case 'in_transit':
-        return 'bg-info/10 text-info'
-      case 'delivered':
-        return 'bg-success/10 text-success'
+        return 'bg-blue-100 text-blue-800 border-blue-200'
+      case 'customs':
+        return 'bg-amber-100 text-amber-800 border-amber-200'
+      case 'warehouse':
+        return 'bg-purple-100 text-purple-800 border-purple-200'
+      case 'available':
+        return 'bg-green-100 text-green-800 border-green-200'
       default:
         return 'bg-muted/10 text-muted-foreground'
+    }
+  }
+
+  const getProgressPercentage = (status: string) => {
+    switch (status) {
+      case 'booked': return 20
+      case 'in_transit': return 40
+      case 'customs': return 60
+      case 'warehouse': return 80
+      case 'available': return 100
+      default: return 0
     }
   }
 
@@ -58,9 +77,9 @@ export function ShipmentsPage() {
       {/* Header */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-h1 font-semibold">{t('shipments')}</h1>
+          <h1 className="text-h1 font-semibold">Incoming Consignments</h1>
           <p className="text-muted-foreground">
-            Track your orders and shipments
+            Track incoming inventory and product availability
           </p>
         </div>
 
@@ -70,7 +89,7 @@ export function ShipmentsPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by tracking number or carrier..."
+                placeholder="Search by reference number, carrier, or origin..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -85,7 +104,7 @@ export function ShipmentsPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <p className="text-small text-muted-foreground">
-              {filteredShipments.length} shipment{filteredShipments.length !== 1 ? 's' : ''}
+              {filteredShipments.length} consignment{filteredShipments.length !== 1 ? 's' : ''}
             </p>
           </div>
           
@@ -94,33 +113,55 @@ export function ShipmentsPage() {
               <Card key={shipment.id} className="hover-lift">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">{shipment.trackingNumber}</h3>
-                    <div className={`px-2 py-1 rounded-full text-caption flex items-center gap-1 ${getStatusColor(shipment.status)}`}>
+                    <div>
+                      <h3 className="font-semibold">{shipment.referenceNumber}</h3>
+                      <p className="text-sm text-muted-foreground">{shipment.trackingNumber}</p>
+                    </div>
+                    <Badge className={`border ${getStatusColor(shipment.status)} flex items-center gap-1`}>
                       {getStatusIcon(shipment.status)}
-                      {t(shipment.status)}
+                      {shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
+                    </Badge>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Progress</span>
+                      <span>{getProgressPercentage(shipment.status)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${getProgressPercentage(shipment.status)}%` }}
+                      />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex justify-between text-small">
-                      <span className="text-muted-foreground">{t('carrier')}:</span>
-                      <span>{shipment.carrier}</span>
+                      <span className="text-muted-foreground">Origin:</span>
+                      <span className="text-right">{shipment.origin}</span>
                     </div>
                     <div className="flex justify-between text-small">
-                      <span className="text-muted-foreground">{t('estimatedDelivery')}:</span>
-                      <span>{formatDate(shipment.estimatedDelivery)}</span>
+                      <span className="text-muted-foreground">ETA:</span>
+                      <Badge variant="outline" className="text-xs">
+                        {formatDate(shipment.estimatedDelivery)}
+                      </Badge>
                     </div>
-                    {shipment.actualDelivery && (
-                      <div className="flex justify-between text-small">
-                        <span className="text-muted-foreground">Delivered:</span>
-                        <span className="text-success">{formatDate(shipment.actualDelivery)}</span>
+                    <div className="flex justify-between text-small">
+                      <span className="text-muted-foreground">Items:</span>
+                      <span>{shipment.manifestItems?.length || 0} products</span>
+                    </div>
+                    {shipment.notes && (
+                      <div className="pt-2">
+                        <p className="text-xs text-muted-foreground">{shipment.notes}</p>
                       </div>
                     )}
                   </div>
                   
                   <Button variant="outline" size="sm" asChild className="w-full rounded-xl">
                     <Link to={`/shipments/${shipment.id}`}>
-                      {t('view')} {t('shipmentDetails')}
+                      View Consignment Details
                     </Link>
                   </Button>
                 </CardContent>

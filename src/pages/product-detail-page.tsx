@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { ShoppingCart, MessageCircle, Package, Eye, Star, Boxes } from "lucide-react"
+import { ShoppingCart, MessageCircle, Package, Eye, Star, Boxes, Ship } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { Card, CardContent } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
@@ -17,12 +17,12 @@ import { ProductCard } from "../components/product/product-card"
 import { useI18n } from "../providers/i18n-provider"
 import { useAppStore } from "../store/app-store"
 import { ImageWithFallback } from "../components/figma/ImageWithFallback"
-import { toast } from "sonner@2.0.3"
+import { toast } from "sonner"
 
 export function ProductDetailPage() {
   const { productSlug } = useParams<{ productSlug: string }>()
   const { t, formatCurrency } = useI18n()
-  const { products, addToInquiryCart, getVariantStockStatus } = useAppStore()
+  const { products, shipments, addToInquiryCart, getVariantStockStatus } = useAppStore()
   const [quantity, setQuantity] = useState(1)
   const [inquiryNotes, setInquiryNotes] = useState("")
   const [questionText, setQuestionText] = useState("")
@@ -92,6 +92,23 @@ export function ProductDetailPage() {
       .filter(p => p.category === product.category && p.id !== product.id)
       .slice(0, 4)
   }, [products, product])
+
+  // Find upcoming consignments containing this product
+  const upcomingConsignments = useMemo(() => {
+    if (!product) return []
+    
+    return shipments.filter(shipment => {
+      // Only show consignments that are not yet available (incoming stock)
+      if (shipment.status === 'available') return false
+      
+      // Check if this product is in the manifest
+      return shipment.manifestItems?.some(item => item.productId === product.id) || false
+    }).sort((a, b) => 
+      new Date(a.estimatedDelivery).getTime() - new Date(b.estimatedDelivery).getTime()
+    )
+  }, [product, shipments])
+
+  const nextConsignment = upcomingConsignments[0]
 
   const handleAddToInquiry = () => {
     if (!product) return
@@ -201,6 +218,29 @@ export function ProductDetailPage() {
                 SKU: {currentSku}
               </div>
             </div>
+            
+            {/* Upcoming Consignment Alert */}
+            {nextConsignment && !isInStock && (
+              <Card className="border-blue-200 bg-blue-50">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Ship className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-blue-900">
+                        Next batch arriving {formatDate(nextConsignment.estimatedDelivery)}
+                      </p>
+                      <p className="text-xs text-blue-700">
+                        Consignment {nextConsignment.referenceNumber} • 
+                        {nextConsignment.manifestItems?.find(item => item.productId === product.id)?.quantity || 0} units incoming
+                      </p>
+                      <p className="text-xs text-blue-600">
+                        Status: {nextConsignment.status.charAt(0).toUpperCase() + nextConsignment.status.slice(1)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             
             {/* Variant & Packing Selectors */}
             {hasVariants && (

@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
-import { Truck, Package, Clock, CheckCircle, MapPin, Calendar } from "lucide-react"
+import { Truck, Package, Clock, CheckCircle, MapPin, Calendar, Ship, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
 import { Separator } from "../components/ui/separator"
@@ -73,30 +73,44 @@ const mockManifest = [
 export function ShipmentDetailPage() {
   const { shipmentId } = useParams<{ shipmentId: string }>()
   const { t, formatDate } = useI18n()
-  const { shipments } = useAppStore()
+  const { shipments, getProductById } = useAppStore()
 
-  // Find shipment by ID
+  // Find consignment by ID
   const shipment = useMemo(() => {
     return shipments.find(s => s.id === shipmentId)
   }, [shipments, shipmentId])
 
-  const getStatusIcon = (status: string, completed: boolean, current: boolean) => {
+  const getStatusIcon = (status: string, completed: boolean = false, current: boolean = false) => {
     if (completed) {
-      return <CheckCircle className="h-5 w-5 text-success" />
+      return <CheckCircle className="h-5 w-5 text-green-600" />
     } else if (current) {
-      return <Clock className="h-5 w-5 text-info animate-spin" />
+      return <Clock className="h-5 w-5 text-blue-600 animate-spin" />
     }
     
     switch (status) {
       case 'booked':
-        return <Package className="h-5 w-5 text-muted-foreground" />
-      case 'shipped':
+        return <Package className="h-5 w-5 text-gray-500" />
       case 'in_transit':
-        return <Truck className="h-5 w-5 text-muted-foreground" />
+        return <Ship className="h-5 w-5 text-blue-500" />
       case 'customs':
-        return <MapPin className="h-5 w-5 text-muted-foreground" />
+        return <AlertCircle className="h-5 w-5 text-amber-500" />
+      case 'warehouse':
+        return <Package className="h-5 w-5 text-purple-500" />
+      case 'available':
+        return <CheckCircle className="h-5 w-5 text-green-500" />
       default:
         return <Clock className="h-5 w-5 text-muted-foreground" />
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'booked': return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'in_transit': return 'bg-blue-100 text-blue-800 border-blue-200'
+      case 'customs': return 'bg-amber-100 text-amber-800 border-amber-200'
+      case 'warehouse': return 'bg-purple-100 text-purple-800 border-purple-200'
+      case 'available': return 'bg-green-100 text-green-800 border-green-200'
+      default: return 'bg-muted/10 text-muted-foreground'
     }
   }
 
@@ -121,22 +135,24 @@ export function ShipmentDetailPage() {
     <div className="space-y-8 p-6">
       <BreadcrumbNavigation />
 
-      {/* Shipment Header */}
+      {/* Consignment Header */}
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-h1 font-semibold">{shipment.trackingNumber}</h1>
-            <p className="text-muted-foreground">{t('shipmentDetails')}</p>
+            <h1 className="text-h1 font-semibold">{shipment.referenceNumber}</h1>
+            <p className="text-muted-foreground">Consignment Details</p>
+            <p className="text-sm text-muted-foreground">Tracking: {shipment.trackingNumber}</p>
           </div>
-          <Badge 
-            variant={
-              shipment.status === 'delivered' ? 'default' :
-              shipment.status === 'shipped' ? 'secondary' : 'outline'
-            }
-            className="text-small"
-          >
-            {t(shipment.status)}
-          </Badge>
+          <div className="flex flex-col items-end gap-2">
+            <Badge className={`border ${getStatusColor(shipment.status)} flex items-center gap-1`}>
+              {getStatusIcon(shipment.status)}
+              {shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
+            </Badge>
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">ETA</p>
+              <p className="font-medium">{formatDate(shipment.estimatedDelivery)}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -151,35 +167,39 @@ export function ShipmentDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {mockShipmentTimeline.map((step, index) => (
-                <div key={step.status} className="flex gap-4">
+              {shipment.timeline?.map((step, index) => (
+                <div key={step.id} className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    {getStatusIcon(step.status, step.completed, step.current || false)}
-                    {index < mockShipmentTimeline.length - 1 && (
-                      <div className={`w-px h-12 mt-2 ${
-                        step.completed ? 'bg-success' : 'bg-border'
-                      }`} />
+                    {getStatusIcon(step.status, true, shipment.status === step.status)}
+                    {index < (shipment.timeline?.length || 0) - 1 && (
+                      <div className="w-px h-12 mt-2 bg-border" />
                     )}
                   </div>
                   
                   <div className="flex-1 pb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className={`font-medium ${
-                        step.current ? 'text-info' : 
-                        step.completed ? 'text-foreground' : 'text-muted-foreground'
-                      }`}>
-                        {step.title}
+                      <h3 className="font-medium">
+                        {step.status.charAt(0).toUpperCase() + step.status.slice(1)}
                       </h3>
                       <span className="text-small text-muted-foreground">
-                        {formatDate(step.date)}
+                        {formatDate(step.timestamp)}
                       </span>
                     </div>
                     <p className="text-small text-muted-foreground">
-                      {step.description}
+                      {step.location}
                     </p>
+                    {step.notes && (
+                      <p className="text-small text-muted-foreground mt-1">
+                        {step.notes}
+                      </p>
+                    )}
                   </div>
                 </div>
-              ))}
+              )) || (
+                <p className="text-muted-foreground text-center py-4">
+                  No timeline data available
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -188,27 +208,46 @@ export function ShipmentDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
-                {t('manifest')}
+                Consignment Manifest
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockManifest.map((item, index) => (
-                  <div key={item.id}>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h4 className="font-medium">{item.name}</h4>
-                        <div className="flex gap-4 text-small text-muted-foreground">
-                          <span>{t('quantity')}: {item.quantity}</span>
-                          <span>Weight: {item.weight}</span>
+                {shipment.manifestItems?.map((item, index) => {
+                  const product = getProductById(item.productId)
+                  return (
+                    <div key={`${item.productId}-${item.variantId || index}`}>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h4 className="font-medium">
+                            {product?.name || item.description}
+                          </h4>
+                          <div className="flex gap-4 text-small text-muted-foreground mt-1">
+                            <span>Quantity: {item.quantity}</span>
+                            {item.variantId && (
+                              <span>Variant: {item.variantId}</span>
+                            )}
+                          </div>
+                          <div className="mt-2">
+                            <Badge 
+                              variant="outline" 
+                              className="bg-blue-50 text-blue-700 border-blue-200"
+                            >
+                              {shipment.status === 'available' ? 'Available Now' : 'Incoming Stock'}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
+                      {index < (shipment.manifestItems?.length || 0) - 1 && (
+                        <Separator className="mt-4" />
+                      )}
                     </div>
-                    {index < mockManifest.length - 1 && (
-                      <Separator className="mt-4" />
-                    )}
-                  </div>
-                ))}
+                  )
+                }) || (
+                  <p className="text-muted-foreground text-center py-4">
+                    No manifest items available
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
