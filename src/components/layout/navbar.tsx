@@ -70,18 +70,20 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-md mx-6">
-            <form onSubmit={handleSearchSubmit} className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t('search')}
-                value={localSearchQuery}
-                onChange={(e) => setLocalSearchQuery(e.target.value)}
-                className="pl-10 rounded-xl"
-              />
-            </form>
-          </div>
+          {/* Search Bar - Only show on non-home pages */}
+          {location.pathname !== '/' && (
+            <div className="flex-1 max-w-md mx-6">
+              <form onSubmit={handleSearchSubmit} className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t('search')}
+                  value={localSearchQuery}
+                  onChange={(e) => setLocalSearchQuery(e.target.value)}
+                  className="pl-10 rounded-xl"
+                />
+              </form>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex items-center space-x-2">

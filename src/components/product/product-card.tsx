@@ -71,7 +71,7 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
       packingOptionId: defaultPackingOption?.id || undefined,
       quantity: 1,
     })
-    toast.success(t('addToCart'))
+    toast.success(t('addToCart'), { duration: 1500 }) // Show for 1.5 seconds instead of default
   }
 
   return (
@@ -155,10 +155,10 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
               <div className="flex flex-col items-end gap-1">
                 <Badge 
                   variant={isInStock ? (stockStatus === 'low_stock' ? 'destructive' : 'default') : 'destructive'}
-                  className={`text-caption ${
-                    stockStatus === 'in_stock' ? 'bg-green-100 text-green-800' :
-                    stockStatus === 'low_stock' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
+                  className={`text-caption font-medium ${
+                    stockStatus === 'in_stock' ? 'bg-green-100 text-green-800 border-green-200' :
+                    stockStatus === 'low_stock' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                    'bg-red-100 text-red-800 border-red-200'
                   }`}
                 >
                   {stockStatus === 'in_stock' ? t('inStock') : 

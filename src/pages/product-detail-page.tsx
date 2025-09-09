@@ -105,7 +105,7 @@ export function ProductDetailPage() {
     })
     
     const variantInfo = currentVariant ? ` (${currentVariant.size})` : ''
-    toast.success(`${product.name}${variantInfo} added to inquiry cart`)
+    toast.success(`${product.name}${variantInfo} added to inquiry cart`, { duration: 1500 })
     setQuantity(1)
     setInquiryNotes("")
   }

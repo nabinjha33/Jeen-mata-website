@@ -178,7 +178,7 @@ export const useAppStore = create<AppStore>()(
       
       getInquiryCartTotal: () => {
         const { inquiryCart } = get()
-        return inquiryCart.reduce((total, item) => total + item.quantity, 0)
+        return inquiryCart.length // Return number of unique items, not total quantity
       },
       
       getProductById: (id) => {

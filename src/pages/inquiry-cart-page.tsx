@@ -39,6 +39,8 @@ export function InquiryCartPage() {
     message: ''
   })
   
+  const [overallNotes, setOverallNotes] = useState('')
+  
   const [showInquiryForm, setShowInquiryForm] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -159,7 +161,16 @@ export function InquiryCartPage() {
             <Trash2 className="h-4 w-4 mr-2" />
             Clear All
           </Button>
-          <Button onClick={() => setShowInquiryForm(true)}>
+          <Button onClick={() => {
+            setShowInquiryForm(true)
+            // Scroll to inquiry form after a short delay
+            setTimeout(() => {
+              document.getElementById('inquiry-form')?.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+              })
+            }, 100)
+          }}>
             <MessageCircle className="h-4 w-4 mr-2" />
             {t('submitInquiry')}
           </Button>
@@ -279,6 +290,27 @@ export function InquiryCartPage() {
               </CardContent>
             </Card>
           ))}
+          
+          {/* Overall Notes Section */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold">Overall Notes</h3>
+                <div className="space-y-2">
+                  <label className="text-small text-muted-foreground">
+                    Add any general requirements, delivery preferences, or special instructions
+                  </label>
+                  <Textarea
+                    placeholder="e.g., Urgent delivery required, specific packaging needs, bulk discount inquiry..."
+                    value={overallNotes}
+                    onChange={(e) => setOverallNotes(e.target.value)}
+                    rows={3}
+                    className="resize-none"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Summary */}
@@ -314,18 +346,13 @@ export function InquiryCartPage() {
             </CardContent>
           </Card>
 
-          {!showInquiryForm && (
-            <Button onClick={() => setShowInquiryForm(true)} className="w-full" size="lg">
-              <MessageCircle className="h-4 w-4 mr-2" />
-              {t('submitInquiry')}
-            </Button>
-          )}
+          {/* Removed duplicate submit inquiry button */}
         </div>
       </div>
 
       {/* Inquiry Form */}
       {showInquiryForm && (
-        <Card>
+        <Card id="inquiry-form">
           <CardHeader>
             <CardTitle>{t('inquiryForm')}</CardTitle>
           </CardHeader>
@@ -426,6 +453,12 @@ export function InquiryCartPage() {
                 onChange={(e) => setCustomerDetails(prev => ({ ...prev, message: e.target.value }))}
                 rows={4}
               />
+              {overallNotes && (
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <p className="text-small font-medium text-muted-foreground mb-2">Overall Notes:</p>
+                  <p className="text-small">{overallNotes}</p>
+                </div>
+              )}
             </div>
             
             <div className="flex gap-3">
