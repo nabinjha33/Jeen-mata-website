@@ -75,8 +75,8 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
   }
 
   return (
-    <Card className="group overflow-hidden hover-lift transition-all duration-300">
-      <CardContent className="p-0">
+    <Card className="group overflow-hidden hover-lift transition-all duration-300 flex flex-col h-full">
+      <CardContent className="p-0 flex-1 flex flex-col">
         <div className="relative aspect-square overflow-hidden">
           <ImageWithFallback
             src={product.imageUrl}
@@ -106,8 +106,8 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
           </div>
         </div>
         
-        <div className="p-4">
-          <div className="space-y-3">
+        <div className="p-4 flex-1 flex flex-col">
+          <div className="space-y-3 flex-1">
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-medium text-body leading-tight line-clamp-2">
                 {product.name}
@@ -140,7 +140,7 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
               </div>
             )}
             
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mt-auto">
               <div>
                 {showPrice && (
                   <span className="text-h4 font-semibold text-primary">
@@ -176,7 +176,7 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
         </div>
       </CardContent>
       
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-4 pt-0 mt-auto">
         <Button
           onClick={handleAddToCart}
           disabled={!isInStock}

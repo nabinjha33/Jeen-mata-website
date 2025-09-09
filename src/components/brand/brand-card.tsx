@@ -17,9 +17,9 @@ export function BrandCard({ brand }: BrandCardProps) {
   const brandSlug = brand.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
   return (
-    <Card className="group overflow-hidden hover-lift transition-all duration-300">
-      <CardContent className="p-6">
-        <div className="flex flex-col items-center text-center space-y-4">
+    <Card className="group overflow-hidden hover-lift transition-all duration-300 flex flex-col h-full">
+      <CardContent className="p-6 flex-1 flex flex-col">
+        <div className="flex flex-col items-center text-center space-y-4 flex-1">
           <div className="relative w-24 h-12 flex items-center justify-center bg-muted rounded-lg overflow-hidden">
             <ImageWithFallback
               src={brand.logoUrl}
@@ -28,20 +28,22 @@ export function BrandCard({ brand }: BrandCardProps) {
             />
           </div>
           
-          <div className="space-y-2">
-            <h3 className="font-semibold text-h4">
-              {brand.name}
-            </h3>
+          <div className="space-y-2 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 className="font-semibold text-h4">
+                {brand.name}
+              </h3>
+              
+              <p className="text-small text-muted-foreground line-clamp-3 mt-2">
+                {brand.description}
+              </p>
+            </div>
             
-            <p className="text-small text-muted-foreground line-clamp-3">
-              {brand.description}
-            </p>
-            
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-center mt-auto">
               <Badge variant="outline" className="text-caption">
                 {brand.countryOfOrigin}
               </Badge>
-              <Badge variant="secondary" className="text-caption">
+              <Badge variant="outline" className="text-caption bg-primary/10 text-primary border-primary/20 font-medium">
                 <Package className="h-3 w-3 mr-1" />
                 {brand.productCount} {t('products')}
               </Badge>
@@ -50,7 +52,7 @@ export function BrandCard({ brand }: BrandCardProps) {
         </div>
       </CardContent>
       
-      <CardFooter className="p-6 pt-0 flex gap-2">
+      <CardFooter className="p-6 pt-0 flex gap-2 mt-auto">
         <Button
           asChild
           className="flex-1 rounded-xl"
