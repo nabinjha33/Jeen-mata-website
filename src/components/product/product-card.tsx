@@ -11,7 +11,7 @@ import { useI18n } from "../../providers/i18n-provider"
 import { useAppStore } from "../../store/app-store"
 import { type Product } from "../../data/fixtures"
 import { ImageWithFallback } from "../figma/ImageWithFallback"
-import { toast } from "sonner@2.0.3"
+import { toast } from "sonner"
 
 interface ProductCardProps {
   product: Product

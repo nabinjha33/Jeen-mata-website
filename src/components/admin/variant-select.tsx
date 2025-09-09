@@ -55,7 +55,7 @@ export function VariantSelect({ productId, value, onValueChange, placeholder = "
                 <CommandItem
                   key={variant.id}
                   value={variant.id}
-                  onSelect={(currentValue) => {
+                  onSelect={(currentValue: string) => {
                     onValueChange(currentValue === value ? "" : currentValue)
                     setOpen(false)
                   }}

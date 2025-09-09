@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Check, ChevronsUpDown, Search } from "lucide-react"
+import { Check, ChevronsUpDown } from "lucide-react"
 import { Button } from "../ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
@@ -56,7 +56,7 @@ export function ProductSelect({ value, onValueChange, placeholder = "Select prod
                 <CommandItem
                   key={product.id}
                   value={product.id}
-                  onSelect={(currentValue) => {
+                  onSelect={(currentValue: string) => {
                     onValueChange(currentValue === value ? "" : currentValue)
                     setOpen(false)
                   }}
