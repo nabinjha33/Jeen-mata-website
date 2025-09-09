@@ -1,0 +1,166 @@
+Scope: UI only. Do not add DB/schema/APIs. Use a tiny client store (Zustand or Context+Reducer) initialized from /data/fixtures/shipments.json and /data/fixtures/products-lite.json. Pages must never go blank—show skeleton/empty/error states.
+
+0) Guardrails
+
+Mark interactive files with 'use client'.
+
+Keep current design system and styling.
+
+Every action shows disabled/loading state + toast.
+
+Maintain layout stability: fixed table heights, skeletons matching final size, table-layout: fixed, stable container widths.
+
+1) Routes & Shell (Admin)
+
+Ensure we have:
+
+/admin/shipments (list)
+
+/admin/shipments/[id] (detail) or a side Drawer from the list.
+
+Admin layout must render {children} and keep a fixed content container (avoid reflow/jumps).
+
+2) Client Store (UI-only)
+
+Create stores/shipmentsStore.ts (or similar) with this shape:
+
+type ShipmentStage = 'BOOKED'|'TRANSIT'|'CUSTOMS'|'WAREHOUSE'|'AVAILABLE';
+
+type ShipmentItem = {
+  id: string; shipmentId: string; productId: string;
+  variantId?: string; qty: number;
+};
+
+type Shipment = {
+  id: string; ref: string; stage: ShipmentStage;
+  eta?: string; notes?: string; items: ShipmentItem[];
+  createdAt: string; updatedAt: string;
+};
+
+type ProductLite = { id: string; name: string; variants?: {id:string; sizeLabel:string}[] };
+
+state = {
+  shipments: Shipment[];
+  productsLite: ProductLite[];
+}
+
+actions = {
+  createShipment(input: {ref:string; stage?:ShipmentStage; eta?:string; notes?:string}): Shipment
+  updateShipment(id:string, patch: Partial<Shipment>): void
+  addItem(input: {shipmentId:string; productId:string; variantId?:string; qty:number}): ShipmentItem
+  updateItem(itemId:string, patch:{qty:number}): void
+  deleteItem(itemId:string): void
+}
+
+
+Initialize from fixtures; write back to memory only.
+
+Generate id via crypto.randomUUID().
+
+3) Admin → Shipments List (/admin/shipments)
+
+Top bar
+
+Primary “Add Consignment” button → opens Drawer.
+
+Filters: Stage (dropdown), Search (by ref or notes), both URL-synced (?stage=&q=&page=).
+
+Table columns
+
+Ref, Stage (badge), ETA, Items (count), Updated, Actions (Edit / Open).
+
+Add Consignment Drawer
+
+Form fields: Ref* (unique), Stage (default BOOKED), ETA (date), Notes (textarea).
+
+Validate on submit; on success:
+
+createShipment() → close drawer → toast “Consignment created” → highlight new row.
+
+Empty/Skeleton
+
+Show Empty state with CTA when no data.
+
+Show Skeleton table (fixed height) while “loading”.
+
+4) Admin → Shipment Detail (Drawer or /admin/shipments/[id])
+
+Header (editable)
+
+Inputs: Ref (text), Stage (select), ETA (date), Notes (textarea).
+
+Save button → updateShipment(); disable while saving; toast on success.
+
+Manifest section
+
+Table columns: Product, Variant/Size, Qty, Actions (Edit/Delete).
+
+“Add Item” button → opens Drawer:
+
+Product select (searchable from productsLite).
+
+Variant select (optional; filtered by product’s variants).
+
+Qty number input (min 1).
+
+Submit → addItem(); close + toast.
+
+Row actions:
+
+Edit qty inline or mini drawer → updateItem().
+
+Delete with confirm dialog → deleteItem(); toast “Removed”.
+
+UX polish
+
+Keep detail view width fixed; min-h-[600px] to avoid jumps.
+
+Use toasts and inline field errors; never close on failed validation.
+
+5) Product/Variant Pickers (UI only)
+
+Build reusable ProductSelect and VariantSelect components:
+
+Debounced search text filters productsLite by name.
+
+Variant list shows sizeLabel; hide if none.
+
+If productsLite fixture missing, generate a small array from current catalog UI components.
+
+6) Reusable UI bits
+
+Create (if missing) under components/admin/:
+
+DrawerForm.tsx – title, description, form slot, primary/secondary actions.
+
+ConfirmDialog.tsx – for deletes.
+
+SkeletonTable.tsx – fixed-height skeleton rows.
+
+Toast.tsx – success/error toasts (or reuse your lib).
+
+7) A11y & “No Jank”
+
+Buttons: aria-label + tooltips.
+
+Focus trap in Drawers/Dialogs; Esc to close; Enter submits.
+
+Images/icons have fixed boxes; tables use table-layout: fixed.
+
+Containers: max-w-screen-xl (or your standard) and consistent gaps.
+
+8) Acceptance Checklist (front-end only)
+
+Create consignment works end-to-end (UI/state) and appears in list.
+
+Edit consignment (stage/eta/notes/ref) updates instantly.
+
+Add/Edit/Delete items in manifest works; counts update in list.
+
+Filters & search are URL-synced and stable on refresh.
+
+No layout jumps when loading, filtering, opening drawers.
+
+No backend calls required; all state changes are in memory.
+
+Proceed. If any referenced file doesn’t exist, create it with sensible defaults. Never throw during render—render a skeleton/empty state instead.
