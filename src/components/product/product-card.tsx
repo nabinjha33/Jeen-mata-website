@@ -48,22 +48,19 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
   const stockStatus = getStockStatus()
   const isInStock = stockStatus !== 'out_of_stock'
   
-  // Get main packing for display
-  const getMainPacking = () => {
+  // Get all available packings for display
+  const getAvailablePackings = () => {
     if (hasVariants && currentVariant && currentVariant.packings) {
-      // Find piece packing first, or use the first one
-      const mainPacking = currentVariant.packings.find(p => p.unitsPerPack === 1) || 
-                         currentVariant.packings[0]
-      return mainPacking
+      return currentVariant.packings
     }
-    return null
+    return []
   }
 
-  const mainPacking = getMainPacking()
+  const availablePackings = getAvailablePackings()
 
   const handleAddToCart = () => {
-    const defaultPacking = hasVariants && currentVariant && currentVariant.packings
-      ? currentVariant.packings.find(p => p.unitsPerPack === 1) || currentVariant.packings[0]
+    const defaultPacking = availablePackings.length > 0
+      ? availablePackings.find(p => p.unitsPerPack === 1) || availablePackings[0]
       : null
 
     addToInquiryCart({
@@ -164,14 +161,25 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                    t('outOfStock')}
                 </Badge>
                 
-                {/* Packing Indicator */}
-                {mainPacking && (
-                  <div 
-                    className="flex items-center gap-1 text-caption text-muted-foreground"
-                    title={`Primary packing: ${mainPacking.label} (${mainPacking.unitsPerPack} pieces per pack)`}
-                  >
-                    <Package className="h-3 w-3" />
-                    <span>{mainPacking.label} ({mainPacking.unitsPerPack})</span>
+                {/* Packing Options */}
+                {availablePackings.length > 0 && (
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1 text-caption text-muted-foreground">
+                      <Package className="h-3 w-3" />
+                      <span className="font-medium">Available Packing:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {availablePackings.map((packing) => (
+                        <Badge 
+                          key={packing.id}
+                          variant="outline" 
+                          className="text-[10px] h-5 px-1.5 border-blue-200 text-blue-700 bg-blue-50"
+                          title={`${packing.label}: ${packing.unitsPerPack} pieces per pack`}
+                        >
+                          {packing.label} ({packing.unitsPerPack})
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
