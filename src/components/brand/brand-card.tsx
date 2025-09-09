@@ -20,7 +20,7 @@ export function BrandCard({ brand }: BrandCardProps) {
     <Card className="group overflow-hidden hover-lift transition-all duration-300 flex flex-col h-full">
       <CardContent className="p-6 flex-1 flex flex-col">
         <div className="flex flex-col items-center text-center space-y-4 flex-1">
-          <div className="relative w-24 h-12 flex items-center justify-center bg-muted rounded-lg overflow-hidden">
+          <div className="relative w-32 h-16 flex items-center justify-center bg-muted rounded-lg overflow-hidden">
             <ImageWithFallback
               src={brand.logoUrl}
               alt={`${brand.name} logo`}
