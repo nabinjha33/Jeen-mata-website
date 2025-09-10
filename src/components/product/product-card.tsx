@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ShoppingCart, Eye, Package } from "lucide-react"
+import { ShoppingCart, Eye } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Card, CardContent, CardFooter } from "../ui/card"
 import { Button } from "../ui/button"
@@ -48,7 +48,7 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
   const stockStatus = getStockStatus()
   const isInStock = stockStatus !== 'out_of_stock'
   
-  // Get all available packings for display
+  // Get all available packings for cart functionality
   const getAvailablePackings = () => {
     if (hasVariants && currentVariant && currentVariant.packings) {
       return currentVariant.packings
@@ -138,8 +138,9 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
               </div>
             )}
             
-            <div className="flex items-center justify-between mt-auto">
-              <div>
+            {/* Price and Stock Status */}
+            <div className="flex items-center justify-between pt-2 border-t border-border/30">
+              <div className="flex flex-col gap-1">
                 {showPrice && (
                   <span className="text-h4 font-semibold text-primary">
                     {formatCurrency(currentPrice)}
@@ -147,38 +148,29 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                 )}
               </div>
               
-              <div className="flex flex-col items-end gap-1">
-                <Badge 
-                  variant={isInStock ? (stockStatus === 'low_stock' ? 'destructive' : 'default') : 'destructive'}
-                  className={`text-caption font-medium ${
-                    stockStatus === 'in_stock' ? 'bg-green-100 text-green-800 border-green-200' :
-                    stockStatus === 'low_stock' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
-                    'bg-red-100 text-red-800 border-red-200'
-                  }`}
-                >
-                  {stockStatus === 'in_stock' ? t('inStock') : 
-                   stockStatus === 'low_stock' ? 'Low Stock' : 
-                   t('outOfStock')}
-                </Badge>
-                
-                {/* Packing Options */}
-                {availablePackings.length > 0 && (
-                  <div 
-                    className="text-[10px] text-slate-600 bg-white px-2 py-1 rounded border border-slate-200/60 shadow-sm"
-                    title={`Available packaging options: ${availablePackings.map(p => `${p.label} (${p.unitsPerPack} pieces)`).join(', ')}`}
-                  >
-                    <div className="flex items-center gap-1">
-                      <Package className="h-2.5 w-2.5 text-slate-400 flex-shrink-0" />
-                      <span className="font-medium text-slate-500 truncate">
-                        {availablePackings.length === 1 
-                          ? `${availablePackings[0].label} (${availablePackings[0].unitsPerPack})` 
-                          : `${availablePackings.length} packing options`}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Badge 
+                variant={isInStock ? (stockStatus === 'low_stock' ? 'destructive' : 'default') : 'destructive'}
+                className={`text-caption font-medium ${
+                  stockStatus === 'in_stock' ? 'bg-green-100 text-green-800 border-green-200' :
+                  stockStatus === 'low_stock' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                  'bg-red-100 text-red-800 border-red-200'
+                }`}
+              >
+                {stockStatus === 'in_stock' ? t('inStock') : 
+                 stockStatus === 'low_stock' ? 'Low Stock' : 
+                 t('outOfStock')}
+              </Badge>
             </div>
+            
+            {/* Remarks Section */}
+            {product.remarks && (
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200/60">
+                <h4 className="text-caption font-medium text-slate-700 mb-1">Additional Notes</h4>
+                <p className="text-small text-slate-600 leading-relaxed line-clamp-2">
+                  {product.remarks}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

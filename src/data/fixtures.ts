@@ -32,6 +32,7 @@ export interface Product {
   sku: string
   variants?: ProductVariant[] // Empty array if no variants
   defaultVariantId?: string // ID of the default/main variant
+  remarks?: string // Additional notes/packing details
 }
 
 export interface Category {
