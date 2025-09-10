@@ -1,0 +1,102 @@
+From the current frontend code, generate a complete handover pack so backend can implement APIs and we can flip the UI from fixtures to live data without refactors.
+
+Tasks (do all)
+
+Repo Analysis
+
+Map the route tree (public + admin) and list the components each route renders.
+
+Detect all data access points: React Query hooks / fetchers / services; note base URLs and headers.
+
+Extract TypeScript types and props actually used by UI (Product, Brand, Category, ProductVariant, VariantPacking, Shipment, ShipmentItem, Inquiry, Settings, enums).
+
+API Contract (derive from UI usage)
+
+For every hook/fetch call, infer the expected endpoint, method, query params, body, success response, error shape, pagination, sorting, and filters.
+
+Produce concrete examples (3 per resource): request + response JSON.
+
+Include upload flow if present (signed URL vs direct upload).
+
+Hook ↔ Endpoint Map
+
+Table mapping: Hook name → HTTP method + path → request shape → response shape → cacheKey → invalidations → optimistic update rules.
+
+Auth & Roles Matrix
+
+List which screens require auth and what roles can do what (Owner/Manager/Editor) in Admin (Products, Variants/Packing, Shipments, Inquiries, Settings).
+
+Fixtures & Mocks
+
+Export the exact fixture JSON the UI expects (products, variants, packings, shipments, shipmentItems, inquiries, settings).
+
+Ensure fields and shapes match the API contract you define above.
+
+Config & ENV
+
+Generate .env.example containing all keys used by frontend.
+
+Document feature flags and how the UI reads them (especially priceVisible).
+
+Integration Guide
+
+Write step-by-step instructions to switch hooks from fixtures → live API (base URL, headers, error handling).
+
+Note loading/empty/error states per screen and the conditions that trigger them.
+
+Document URL params used for filters/search (q, brand, category, stock, stage, page, pageSize).
+
+Smoke Tests
+
+Provide cURL or Postman examples that cover:
+
+GET products (filters) + GET product by slug (with variants & packing)
+
+POST inquiry (includes whatsapp field)
+
+Shipments: POST create consignment, PATCH stage/ETA, POST add item, PATCH item qty, DELETE item, GET detail
+
+GET/PACTH settings (priceVisible)
+
+Deliverables (create this folder in repo root)
+/handover
+  README.md                      # how to use this pack
+  openapi.json                   # derived from hooks (or zod schemas + script to export)
+  types.d.ts                     # TS types actually used by UI
+  hooks.md                       # hook→endpoint map + examples + cache/invalidation/optimistic rules
+  auth-roles.md                  # who can do what in Admin
+  uploads.md                     # image upload contract (signed URL or direct), examples
+  routes-and-components.md       # route tree + components + states (loading/empty/error)
+  .env.example                   # all frontend env vars + comments
+  fixtures/
+    products.json
+    brands.json
+    categories.json
+    variants.json                # if separate, else embed in products
+    packings.json                # if separate, else embed in variants
+    shipments.json
+    shipmentItems.json
+    inquiries.json
+    settings.json
+  smoke-tests.postman_collection.json  # OR curl.sh with commands
+
+
+Formatting requirements
+
+Examples must be copy-pasteable and validated against the openapi.json.
+
+Types in types.d.ts must align 1:1 with example payloads (no “maybe” fields that UI doesn’t use).
+
+For each endpoint, include error examples (e.g., validation fail, not found, unique ref conflict).
+
+Acceptance Criteria
+
+Every React Query hook / fetcher in the repo is mapped to a final API contract (no “TBD”).
+
+Fixtures mirror the contract exactly (names, nesting, camelCase, enums).
+
+A backend engineer can implement endpoints solely from /handover and the UI will work by just changing the base URL.
+
+cURL/Postman smoke tests succeed against a mock server using the provided openapi.json.
+
+Now run these tasks and generate the /handover folder. If any ambiguity arises, prefer what the UI currently renders and document the assumption explicitly in README.md under “Assumptions & Gaps.”

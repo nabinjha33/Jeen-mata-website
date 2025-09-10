@@ -1,0 +1,79 @@
+Handover & Integration Contract (Frontend → Backend)
+
+We’ve finished the frontend. Please deliver a backend-integration handover containing:
+
+API Contract
+
+Endpoint list with methods/paths.
+
+Zod/OpenAPI schemas for requests/responses/errors.
+
+Pagination + filter params (names, defaults, sort keys).
+
+Error codes the UI expects.
+
+Types & Models
+
+TS types for: Product, Brand, Category, ProductVariant, VariantPacking, Shipment, ShipmentItem, Inquiry, Settings.
+
+Required vs optional fields; ID/slug rules.
+
+Hook Layer
+
+Expose all React Query hooks used: names, parameters, examples, cache keys, invalidation rules, optimistic update behavior.
+
+List which hooks must switch from fixtures → real API and where to change the base URL.
+
+UI States
+
+Conditions for loading/empty/error/disabled states.
+
+URL param mapping for search and filters.
+
+Auth/Roles
+
+Which screens require auth.
+
+Role gates (Owner/Manager/Editor) baked into UI and expected server checks.
+
+Uploads (if any)
+
+Contract for image upload (signed URL vs direct POST), expected return shape.
+
+Config
+
+.env.example with all keys the frontend reads.
+
+Feature flags/settings (esp. priceVisible) and where they’re consumed.
+
+Fixtures/Mocks
+
+Ship the exact fixture JSONs used (products, brands, shipments, inquiries, settings) and any MSW/mock config.
+
+Docs
+
+README (run steps, providers, folder map).
+
+Style/design tokens and accessibility notes used by components.
+
+Smoke Tests
+
+Provide cURL or Postman requests for: products list/detail; inquiries (POST with WhatsApp number); shipments create/update/addItem/deleteItem; settings get/patch.
+
+Deliver all of the above in a /handover folder:
+
+/handover/openapi.json (or Zod schemas).
+
+/handover/types.d.ts
+
+/handover/hooks.md (with examples)
+
+/handover/fixtures/*.json
+
+/handover/.env.example
+
+/handover/README.md
+
+/handover/smoke-tests.postman_collection.json (optional)
+
+Our backend will implement the endpoints to exactly match your contract, then we’ll flip the hooks from fixtures to live URLs.
