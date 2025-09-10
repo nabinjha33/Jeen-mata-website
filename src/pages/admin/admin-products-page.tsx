@@ -57,7 +57,8 @@ export function AdminProductsPage() {
     sku: '',
     inStock: true,
     tags: '',
-    imageUrl: ''
+    imageUrl: '',
+    remarks: ''
   })
   
   const [productImages, setProductImages] = useState<ManagedImage[]>([])
@@ -76,7 +77,8 @@ export function AdminProductsPage() {
       sku: '',
       inStock: true,
       tags: '',
-      imageUrl: ''
+      imageUrl: '',
+      remarks: ''
     })
     setProductImages([])
     setFormErrors({})
@@ -113,6 +115,7 @@ export function AdminProductsPage() {
       inStock: productForm.inStock,
       specifications: {},
       imageUrl: imageUrl,
+      remarks: productForm.remarks || undefined,
       // Store additional images for future use
       images: productImages.map(img => ({
         url: img.url || img.previewUrl,
@@ -143,7 +146,8 @@ export function AdminProductsPage() {
       sku: product.sku,
       inStock: product.inStock,
       tags: '',
-      imageUrl: product.imageUrl || ''
+      imageUrl: product.imageUrl || '',
+      remarks: product.remarks || ''
     })
     
     // Load existing images if product has them
@@ -181,6 +185,7 @@ export function AdminProductsPage() {
       sku: productForm.sku,
       inStock: productForm.inStock,
       imageUrl: imageUrl,
+      remarks: productForm.remarks || undefined,
       // Store additional images for future use
       images: productImages.map(img => ({
         url: img.url || img.previewUrl,
@@ -557,6 +562,17 @@ export function AdminProductsPage() {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="remarks">Additional Notes / Packing Details</Label>
+            <Textarea
+              id="remarks"
+              value={productForm.remarks}
+              onChange={(e) => setProductForm(prev => ({ ...prev, remarks: e.target.value }))}
+              placeholder="e.g., Special packaging requirements, handling instructions, etc."
+              rows={2}
+            />
+          </div>
+
           {/* Image Management */}
           <ImageManager
             images={productImages}
@@ -633,6 +649,22 @@ export function AdminProductsPage() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="edit-category">Category</Label>
+            <Select value={productForm.category} onValueChange={(value) => setProductForm(prev => ({ ...prev, category: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.name}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="edit-sku">SKU *</Label>
             <Input
               id="edit-sku"
@@ -644,6 +676,62 @@ export function AdminProductsPage() {
             {formErrors.sku && (
               <p className="text-sm text-destructive">{formErrors.sku}</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-price">Price (optional)</Label>
+            <Input
+              id="edit-price"
+              type="number"
+              min="0"
+              step="0.01"
+              value={productForm.price}
+              onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
+              placeholder="0.00"
+              aria-invalid={!!formErrors.price}
+            />
+            {formErrors.price && (
+              <p className="text-sm text-destructive">{formErrors.price}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-description">Description</Label>
+            <Textarea
+              id="edit-description"
+              value={productForm.description}
+              onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
+              placeholder="Product description"
+              rows={3}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-remarks">Additional Notes / Packing Details</Label>
+            <Textarea
+              id="edit-remarks"
+              value={productForm.remarks}
+              onChange={(e) => setProductForm(prev => ({ ...prev, remarks: e.target.value }))}
+              placeholder="e.g., Special packaging requirements, handling instructions, etc."
+              rows={2}
+            />
+          </div>
+
+          {/* Image Management */}
+          <ImageManager
+            images={productImages}
+            onChange={setProductImages}
+            className="col-span-2"
+          />
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-imageUrl">Legacy Image URL (optional)</Label>
+            <Input
+              id="edit-imageUrl"
+              value={productForm.imageUrl}
+              onChange={(e) => setProductForm(prev => ({ ...prev, imageUrl: e.target.value }))}
+              placeholder="https://example.com/image.jpg (fallback if no images uploaded)"
+            />
           </div>
 
           <div className="flex items-center space-x-2">
