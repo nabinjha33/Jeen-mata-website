@@ -1,0 +1,1101 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Jeen Mata Impex API",
+    "description": "Backend API for Jeen Mata Impex import/export platform",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "api@jeenmataimpex.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.jeenmataimpex.com/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:3001/api/v1",
+      "description": "Development server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "required": ["id", "name", "description", "price", "category", "brand", "imageUrl", "inStock", "sku"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "category": { "type": "string" },
+          "brand": { "type": "string" },
+          "imageUrl": { "type": "string" },
+          "inStock": { "type": "boolean" },
+          "specifications": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "sku": { "type": "string" },
+          "variants": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ProductVariant" }
+          },
+          "defaultVariantId": { "type": "string" },
+          "remarks": { "type": "string" },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "alt": { "type": "string" },
+                "isPrimary": { "type": "boolean" },
+                "sort": { "type": "number" }
+              }
+            }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ProductVariant": {
+        "type": "object",
+        "required": ["id", "sizeLabel", "stockState"],
+        "properties": {
+          "id": { "type": "string" },
+          "sizeLabel": { "type": "string" },
+          "priceCents": { "type": "number" },
+          "stockState": { "type": "string", "enum": ["IN", "LOW", "OUT"] },
+          "packings": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VariantPacking" }
+          },
+          "sku": { "type": "string" },
+          "stock": { "type": "number" },
+          "price": { "type": "number" },
+          "unit": { "type": "string" }
+        }
+      },
+      "VariantPacking": {
+        "type": "object",
+        "required": ["id", "label", "unitsPerPack"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "unitsPerPack": { "type": "number" }
+        }
+      },
+      "Brand": {
+        "type": "object",
+        "required": ["id", "name", "description", "logoUrl", "website", "countryOfOrigin", "productCount"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "logoUrl": { "type": "string" },
+          "website": { "type": "string" },
+          "countryOfOrigin": { "type": "string" },
+          "productCount": { "type": "number" }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "required": ["id", "name", "nameNe", "description", "imageUrl", "productCount"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "nameNe": { "type": "string" },
+          "description": { "type": "string" },
+          "imageUrl": { "type": "string" },
+          "productCount": { "type": "number" }
+        }
+      },
+      "Inquiry": {
+        "type": "object",
+        "required": ["id", "userId", "products", "status", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "products": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/InquiryItem" }
+          },
+          "status": { "type": "string", "enum": ["pending", "responded", "closed"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "customerNotes": { "type": "string" },
+          "whatsappNumber": { "type": "string" },
+          "customerName": { "type": "string" },
+          "customerEmail": { "type": "string" },
+          "customerCompany": { "type": "string" }
+        }
+      },
+      "InquiryItem": {
+        "type": "object",
+        "required": ["productId", "quantity"],
+        "properties": {
+          "productId": { "type": "string" },
+          "variantId": { "type": "string" },
+          "packingOptionId": { "type": "string" },
+          "quantity": { "type": "number" },
+          "totalPieces": { "type": "number" },
+          "unitPrice": { "type": "number" },
+          "notes": { "type": "string" }
+        }
+      },
+      "Shipment": {
+        "type": "object",
+        "required": ["id", "referenceNumber", "trackingNumber", "status", "estimatedDelivery", "carrier", "manifestItems", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "referenceNumber": { "type": "string" },
+          "inquiryId": { "type": "string" },
+          "trackingNumber": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["booked", "in_transit", "customs", "warehouse", "available", "delivered"]
+          },
+          "estimatedDelivery": { "type": "string", "format": "date-time" },
+          "actualDelivery": { "type": "string", "format": "date-time" },
+          "carrier": { "type": "string" },
+          "origin": { "type": "string" },
+          "destination": { "type": "string" },
+          "notes": { "type": "string" },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "status": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "location": { "type": "string" },
+                "notes": { "type": "string" }
+              }
+            }
+          },
+          "manifestItems": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ShipmentManifestItem" }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ShipmentManifestItem": {
+        "type": "object",
+        "required": ["productId", "quantity", "totalPieces"],
+        "properties": {
+          "productId": { "type": "string" },
+          "variantId": { "type": "string" },
+          "packingOptionId": { "type": "string" },
+          "quantity": { "type": "number" },
+          "totalPieces": { "type": "number" }
+        }
+      },
+      "AdminSettings": {
+        "type": "object",
+        "properties": {
+          "catalog": {
+            "type": "object",
+            "properties": {
+              "priceVisibility": { "type": "boolean" },
+              "lowStockThreshold": { "type": "number" },
+              "outOfStockThreshold": { "type": "number" }
+            }
+          },
+          "localization": {
+            "type": "object",
+            "properties": {
+              "defaultLanguage": { "type": "string" },
+              "enableMultiLanguage": { "type": "boolean" },
+              "supportedLanguages": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "inquiries": {
+            "type": "object",
+            "properties": {
+              "autoAssignToOwner": { "type": "boolean" },
+              "emailNotifications": { "type": "boolean" },
+              "whatsappNotifications": { "type": "boolean" }
+            }
+          },
+          "shipments": {
+            "type": "object",
+            "properties": {
+              "defaultCarrier": { "type": "string" },
+              "trackingEnabled": { "type": "boolean" },
+              "estimatedDeliveryDays": { "type": "number" }
+            }
+          }
+        }
+      },
+      "PaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {}
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": { "type": "number" },
+              "pageSize": { "type": "number" },
+              "total": { "type": "number" },
+              "totalPages": { "type": "number" }
+            }
+          },
+          "success": { "type": "boolean" },
+          "message": { "type": "string" }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "data": {},
+          "success": { "type": "boolean" },
+          "message": { "type": "string" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "enum": [false] },
+          "message": { "type": "string" },
+          "code": { "type": "string" },
+          "details": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/products": {
+      "get": {
+        "summary": "Get products with filtering and pagination",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Search query" },
+          { "name": "category", "in": "query", "schema": { "type": "string" }, "description": "Filter by category" },
+          { "name": "brand", "in": "query", "schema": { "type": "string" }, "description": "Filter by brand" },
+          { "name": "inStock", "in": "query", "schema": { "type": "boolean" }, "description": "Filter by stock availability" },
+          { "name": "hasVariants", "in": "query", "schema": { "type": "boolean" }, "description": "Filter products with variants" },
+          { "name": "priceMin", "in": "query", "schema": { "type": "number" }, "description": "Minimum price filter" },
+          { "name": "priceMax", "in": "query", "schema": { "type": "number" }, "description": "Maximum price filter" },
+          { "name": "page", "in": "query", "schema": { "type": "number", "default": 1 } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "number", "default": 20 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/PaginatedResponse" },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Product" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new product",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "description", "price", "category", "brand", "imageUrl", "inStock", "sku"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "price": { "type": "number" },
+                  "category": { "type": "string" },
+                  "brand": { "type": "string" },
+                  "imageUrl": { "type": "string" },
+                  "inStock": { "type": "boolean" },
+                  "specifications": {
+                    "type": "object",
+                    "additionalProperties": { "type": "string" }
+                  },
+                  "sku": { "type": "string" },
+                  "variants": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/ProductVariant" }
+                  },
+                  "defaultVariantId": { "type": "string" },
+                  "remarks": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Product" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Get product by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Product" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update product",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "price": { "type": "number" },
+                  "category": { "type": "string" },
+                  "brand": { "type": "string" },
+                  "imageUrl": { "type": "string" },
+                  "inStock": { "type": "boolean" },
+                  "specifications": {
+                    "type": "object",
+                    "additionalProperties": { "type": "string" }
+                  },
+                  "sku": { "type": "string" },
+                  "remarks": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Product" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete product",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{productId}/variants": {
+      "post": {
+        "summary": "Add variant to product",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "productId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProductVariant" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Variant added successfully"
+          }
+        }
+      }
+    },
+    "/products/{productId}/variants/{variantId}": {
+      "patch": {
+        "summary": "Update product variant",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "productId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "variantId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Variant updated successfully" }
+        }
+      },
+      "delete": {
+        "summary": "Delete product variant",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "productId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "variantId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Variant deleted successfully" }
+        }
+      }
+    },
+    "/brands": {
+      "get": {
+        "summary": "Get all brands",
+        "responses": {
+          "200": {
+            "description": "Brands retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Brand" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new brand",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "description", "logoUrl", "website", "countryOfOrigin"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "logoUrl": { "type": "string" },
+                  "website": { "type": "string" },
+                  "countryOfOrigin": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Brand created successfully" }
+        }
+      }
+    },
+    "/brands/{id}": {
+      "get": {
+        "summary": "Get brand by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Brand retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Brand" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update brand",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Brand updated successfully" }
+        }
+      },
+      "delete": {
+        "summary": "Delete brand",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Brand deleted successfully" },
+          "409": {
+            "description": "Cannot delete brand with associated products",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "summary": "Get all categories",
+        "responses": {
+          "200": {
+            "description": "Categories retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Category" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inquiries": {
+      "get": {
+        "summary": "Get inquiries with filtering",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["pending", "responded", "closed"] } },
+          { "name": "userId", "in": "query", "schema": { "type": "string" } },
+          { "name": "fromDate", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "toDate", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "page", "in": "query", "schema": { "type": "number", "default": 1 } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "number", "default": 20 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inquiries retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/PaginatedResponse" },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Inquiry" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new inquiry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["products", "whatsappNumber", "customerName"],
+                "properties": {
+                  "products": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/InquiryItem" }
+                  },
+                  "customerNotes": { "type": "string" },
+                  "whatsappNumber": { "type": "string" },
+                  "customerName": { "type": "string" },
+                  "customerEmail": { "type": "string" },
+                  "customerCompany": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Inquiry created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Inquiry" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inquiries/{id}": {
+      "patch": {
+        "summary": "Update inquiry status",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "enum": ["pending", "responded", "closed"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Inquiry status updated successfully" }
+        }
+      }
+    },
+    "/shipments": {
+      "get": {
+        "summary": "Get shipments with filtering",
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string" } },
+          { "name": "stage", "in": "query", "schema": { "type": "string" } },
+          { "name": "ref", "in": "query", "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "number", "default": 1 } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "number", "default": 20 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shipments retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/PaginatedResponse" },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Shipment" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new shipment",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["referenceNumber", "carrier", "estimatedDelivery", "manifestItems"],
+                "properties": {
+                  "referenceNumber": { "type": "string" },
+                  "inquiryId": { "type": "string" },
+                  "carrier": { "type": "string" },
+                  "origin": { "type": "string" },
+                  "destination": { "type": "string" },
+                  "estimatedDelivery": { "type": "string", "format": "date-time" },
+                  "notes": { "type": "string" },
+                  "manifestItems": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/ShipmentManifestItem" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Shipment created successfully" }
+        }
+      }
+    },
+    "/shipments/{id}": {
+      "get": {
+        "summary": "Get shipment by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shipment retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Shipment" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update shipment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "$ref": "#/components/schemas/Shipment/properties/status" },
+                  "estimatedDelivery": { "type": "string", "format": "date-time" },
+                  "actualDelivery": { "type": "string", "format": "date-time" },
+                  "notes": { "type": "string" },
+                  "timeline": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "status": { "type": "string" },
+                        "timestamp": { "type": "string", "format": "date-time" },
+                        "location": { "type": "string" },
+                        "notes": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Shipment updated successfully" }
+        }
+      }
+    },
+    "/shipments/{id}/items": {
+      "post": {
+        "summary": "Add item to shipment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ShipmentManifestItem" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Item added to shipment successfully" }
+        }
+      }
+    },
+    "/shipments/{id}/items/{itemId}": {
+      "patch": {
+        "summary": "Update shipment item quantity",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": { "type": "number" },
+                  "totalPieces": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Shipment item updated successfully" }
+        }
+      },
+      "delete": {
+        "summary": "Remove item from shipment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Item removed from shipment successfully" }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "summary": "Get admin settings",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Settings retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/AdminSettings" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update admin settings",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AdminSettings" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Settings updated successfully" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User authentication",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "name": { "type": "string" },
+                        "email": { "type": "string" },
+                        "role": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uploads/signed-url": {
+      "post": {
+        "summary": "Get signed URL for image upload",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["filename", "contentType"],
+                "properties": {
+                  "filename": { "type": "string" },
+                  "contentType": { "type": "string" },
+                  "pathHint": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed URL generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uploadUrl": { "type": "string" },
+                    "publicUrl": { "type": "string" },
+                    "storagePath": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
