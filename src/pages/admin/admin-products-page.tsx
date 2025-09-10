@@ -29,7 +29,9 @@ import { useAdminStore } from "../../stores/admin-store"
 import { DrawerForm } from "../../components/admin/drawer-form"
 import { ConfirmDialog } from "../../components/admin/confirm-dialog"
 import { VariantsManagementDrawer } from "../../components/admin/variants-management-drawer"
+import { ImageManager } from "../../components/admin/image-manager"
 import type { Product } from "../../data/fixtures"
+import type { ManagedImage } from "../../types/image-manager"
 
 export function AdminProductsPage() {
   const { products, brands, categories, getVariantStockStatus } = useAppStore()
@@ -58,6 +60,8 @@ export function AdminProductsPage() {
     imageUrl: ''
   })
   
+  const [productImages, setProductImages] = useState<ManagedImage[]>([])
+  
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const tableRef = useRef<HTMLDivElement>(null)
   
@@ -74,6 +78,7 @@ export function AdminProductsPage() {
       tags: '',
       imageUrl: ''
     })
+    setProductImages([])
     setFormErrors({})
   }
   
@@ -94,6 +99,10 @@ export function AdminProductsPage() {
     
     if (!validateForm()) return
     
+    // Determine primary image URL
+    const primaryImage = productImages.find(img => img.isPrimary) || productImages[0]
+    const imageUrl = primaryImage?.url || primaryImage?.previewUrl || productForm.imageUrl || '/placeholder-product.jpg'
+    
     const newProduct = {
       name: productForm.name,
       brand: productForm.brand,
@@ -103,7 +112,14 @@ export function AdminProductsPage() {
       sku: productForm.sku,
       inStock: productForm.inStock,
       specifications: {},
-      imageUrl: productForm.imageUrl || '/placeholder-product.jpg'
+      imageUrl: imageUrl,
+      // Store additional images for future use
+      images: productImages.map(img => ({
+        url: img.url || img.previewUrl,
+        alt: img.alt,
+        isPrimary: img.isPrimary,
+        sort: img.sort
+      }))
     }
     
     const newId = addProduct(newProduct)
@@ -129,12 +145,32 @@ export function AdminProductsPage() {
       tags: '',
       imageUrl: product.imageUrl || ''
     })
+    
+    // Load existing images if product has them
+    const existingImages: ManagedImage[] = []
+    if (product.imageUrl) {
+      existingImages.push({
+        id: 'existing-main',
+        url: product.imageUrl,
+        previewUrl: product.imageUrl,
+        alt: product.name,
+        isPrimary: true,
+        status: 'uploaded',
+        sort: 0,
+        filename: 'Main product image'
+      })
+    }
+    setProductImages(existingImages)
   }
   
   const handleUpdateProduct = (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!editingProduct || !validateForm()) return
+    
+    // Determine primary image URL
+    const primaryImage = productImages.find(img => img.isPrimary) || productImages[0]
+    const imageUrl = primaryImage?.url || primaryImage?.previewUrl || productForm.imageUrl || editingProduct.imageUrl
     
     const updates = {
       name: productForm.name,
@@ -144,7 +180,14 @@ export function AdminProductsPage() {
       price: productForm.price ? Number(productForm.price) : 0,
       sku: productForm.sku,
       inStock: productForm.inStock,
-      imageUrl: productForm.imageUrl || editingProduct.imageUrl
+      imageUrl: imageUrl,
+      // Store additional images for future use
+      images: productImages.map(img => ({
+        url: img.url || img.previewUrl,
+        alt: img.alt,
+        isPrimary: img.isPrimary,
+        sort: img.sort
+      }))
     }
     
     updateProduct(editingProduct.id, updates)
@@ -514,20 +557,21 @@ export function AdminProductsPage() {
             />
           </div>
 
+          {/* Image Management */}
+          <ImageManager
+            images={productImages}
+            onChange={setProductImages}
+            className="col-span-2"
+          />
+
           <div className="space-y-2">
-            <Label htmlFor="imageUrl">Image URL</Label>
-            <div className="flex gap-2">
-              <Input
-                id="imageUrl"
-                value={productForm.imageUrl}
-                onChange={(e) => setProductForm(prev => ({ ...prev, imageUrl: e.target.value }))}
-                placeholder="https://example.com/image.jpg"
-                className="flex-1"
-              />
-              <Button type="button" variant="outline" size="icon" aria-label="Upload image">
-                <Upload className="h-4 w-4" />
-              </Button>
-            </div>
+            <Label htmlFor="imageUrl">Legacy Image URL (optional)</Label>
+            <Input
+              id="imageUrl"
+              value={productForm.imageUrl}
+              onChange={(e) => setProductForm(prev => ({ ...prev, imageUrl: e.target.value }))}
+              placeholder="https://example.com/image.jpg (fallback if no images uploaded)"
+            />
           </div>
 
           <div className="flex items-center space-x-2">
