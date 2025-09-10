@@ -163,22 +163,17 @@ export function ProductCard({ product, showPrice = true }: ProductCardProps) {
                 
                 {/* Packing Options */}
                 {availablePackings.length > 0 && (
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1 text-caption text-muted-foreground">
-                      <Package className="h-3 w-3" />
-                      <span className="font-medium">Available Packing:</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {availablePackings.map((packing) => (
-                        <Badge 
-                          key={packing.id}
-                          variant="outline" 
-                          className="text-[10px] h-5 px-1.5 border-blue-200 text-blue-700 bg-blue-50"
-                          title={`${packing.label}: ${packing.unitsPerPack} pieces per pack`}
-                        >
-                          {packing.label} ({packing.unitsPerPack})
-                        </Badge>
-                      ))}
+                  <div 
+                    className="text-[10px] text-slate-600 bg-white px-2 py-1 rounded border border-slate-200/60 shadow-sm"
+                    title={`Available packaging options: ${availablePackings.map(p => `${p.label} (${p.unitsPerPack} pieces)`).join(', ')}`}
+                  >
+                    <div className="flex items-center gap-1">
+                      <Package className="h-2.5 w-2.5 text-slate-400 flex-shrink-0" />
+                      <span className="font-medium text-slate-500 truncate">
+                        {availablePackings.length === 1 
+                          ? `${availablePackings[0].label} (${availablePackings[0].unitsPerPack})` 
+                          : `${availablePackings.length} packing options`}
+                      </span>
                     </div>
                   </div>
                 )}
