@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
@@ -23,7 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu"
-import { Plus, Search, Filter, MoreHorizontal, Edit, Trash, Eye, Package, Boxes, Settings, ExternalLink, Upload } from "lucide-react"
+import { Plus, Search, Filter, MoreHorizontal, Edit, Trash, Boxes, Settings, ExternalLink } from "lucide-react"
 import { useAppStore } from "../../store/app-store"
 import { useAdminStore } from "../../stores/admin-store"
 import { DrawerForm } from "../../components/admin/drawer-form"
@@ -125,7 +125,7 @@ export function AdminProductsPage() {
       }))
     }
     
-    const newId = addProduct(newProduct)
+    addProduct(newProduct)
     setShowAddProduct(false)
     resetForm()
     
