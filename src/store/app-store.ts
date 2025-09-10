@@ -275,7 +275,7 @@ export const useAppStore = create<AppStore>()(
       getPackingOptionById: (productId, variantId, packingId) => {
         const { getProductVariantById } = get()
         const variant = getProductVariantById(productId, variantId)
-        return variant?.packingOptions.find(po => po.id === packingId)
+        return variant?.packings?.find(p => p.id === packingId)
       },
 
       getVariantStockStatus: (productId, variantId) => {
