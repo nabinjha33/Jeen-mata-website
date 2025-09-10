@@ -1,0 +1,253 @@
+[
+  {
+    "id": "1",
+    "name": "Bosch GSB Impact Drill",
+    "description": "Professional impact drill with variable speed control, perfect for drilling in concrete, metal, and wood.",
+    "price": 8500,
+    "category": "Power Tools",
+    "brand": "Bosch",
+    "imageUrl": "https://images.unsplash.com/photo-1755168648692-ef8937b7e63e?w=400&h=300",
+    "inStock": true,
+    "sku": "BSH-GSB",
+    "defaultVariantId": "1-10mm",
+    "specifications": {
+      "Power": "550W",
+      "No Load Speed": "0-3000 rpm",
+      "Impact Rate": "0-48000 bpm",
+      "Weight": "1.8 kg"
+    },
+    "variants": [
+      {
+        "id": "1-10mm",
+        "sizeLabel": "10mm",
+        "priceCents": 850000,
+        "stockState": "IN",
+        "packings": [
+          { "id": "1-10-piece", "label": "Piece", "unitsPerPack": 1 },
+          { "id": "1-10-box", "label": "Box (5)", "unitsPerPack": 5 }
+        ],
+        "sku": "BSH-GSB-10",
+        "stock": 15,
+        "price": 8500,
+        "unit": "pc"
+      },
+      {
+        "id": "1-13mm",
+        "sizeLabel": "13mm",
+        "priceCents": 920000,
+        "stockState": "LOW",
+        "packings": [
+          { "id": "1-13-piece", "label": "Piece", "unitsPerPack": 1 },
+          { "id": "1-13-box", "label": "Box (4)", "unitsPerPack": 4 }
+        ],
+        "sku": "BSH-GSB-13",
+        "stock": 8,
+        "price": 9200,
+        "unit": "pc"
+      },
+      {
+        "id": "1-16mm",
+        "sizeLabel": "16mm",
+        "priceCents": 1050000,
+        "stockState": "OUT",
+        "packings": [
+          { "id": "1-16-piece", "label": "Piece", "unitsPerPack": 1 },
+          { "id": "1-16-box", "label": "Box (3)", "unitsPerPack": 3 },
+          { "id": "1-16-carton", "label": "Carton (12×Box)", "unitsPerPack": 36 }
+        ],
+        "sku": "BSH-GSB-16",
+        "stock": 3,
+        "price": 10500,
+        "unit": "pc"
+      }
+    ],
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Makita DF331D Cordless Driver",
+    "description": "12V MAX cordless driver drill with LED light and compact design.",
+    "price": 12000,
+    "category": "Power Tools",
+    "brand": "Makita",
+    "imageUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=400&h=300",
+    "inStock": true,
+    "sku": "MKT-DF331D",
+    "specifications": {
+      "Voltage": "12V",
+      "Chuck Size": "10mm",
+      "Max Torque": "30 Nm",
+      "Battery": "Li-ion",
+      "Weight": "1.1 kg"
+    },
+    "createdAt": "2024-01-02T00:00:00Z",
+    "updatedAt": "2024-01-10T14:20:00Z"
+  },
+  {
+    "id": "3",
+    "name": "Stanley Measuring Tape",
+    "description": "Durable measuring tape with easy-to-read markings and sturdy construction.",
+    "price": 450,
+    "category": "Hand Tools",
+    "brand": "Stanley",
+    "imageUrl": "https://images.unsplash.com/photo-1721250527686-9b31f11bfe3e?w=400&h=300",
+    "inStock": true,
+    "sku": "STN-TAPE",
+    "defaultVariantId": "3-5m",
+    "specifications": {
+      "Width": "25mm",
+      "Case Material": "ABS Plastic",
+      "Blade Material": "Steel",
+      "Accuracy": "±2mm/5m"
+    },
+    "variants": [
+      {
+        "id": "3-3m",
+        "sizeLabel": "3m",
+        "priceCents": 35000,
+        "stockState": "IN",
+        "packings": [
+          { "id": "3-3-piece", "label": "Piece", "unitsPerPack": 1 },
+          { "id": "3-3-box", "label": "Box (12)", "unitsPerPack": 12 },
+          { "id": "3-3-carton", "label": "Carton (12×Box)", "unitsPerPack": 144 }
+        ],
+        "sku": "STN-TAPE-3M",
+        "stock": 25,
+        "price": 350,
+        "unit": "pc"
+      },
+      {
+        "id": "3-5m",
+        "sizeLabel": "5m",
+        "priceCents": 45000,
+        "stockState": "IN",
+        "packings": [
+          { "id": "3-5-piece", "label": "Piece", "unitsPerPack": 1 },
+          { "id": "3-5-box", "label": "Box (10)", "unitsPerPack": 10 },
+          { "id": "3-5-carton", "label": "Carton (12×Box)", "unitsPerPack": 120 }
+        ],
+        "sku": "STN-TAPE-5M",
+        "stock": 18,
+        "price": 450,
+        "unit": "pc"
+      },
+      {
+        "id": "3-8m",
+        "sizeLabel": "8m",
+        "priceCents": 65000,
+        "stockState": "LOW",
+        "packings": [
+          { "id": "3-8-piece", "label": "Piece", "unitsPerPack": 1 },
+          { "id": "3-8-box", "label": "Box (6)", "unitsPerPack": 6 }
+        ],
+        "sku": "STN-TAPE-8M",
+        "stock": 5,
+        "price": 650,
+        "unit": "pc"
+      }
+    ],
+    "createdAt": "2024-01-03T00:00:00Z",
+    "updatedAt": "2024-01-12T09:15:00Z"
+  },
+  {
+    "id": "4",
+    "name": "DeWalt Safety Helmet with Visor",
+    "description": "Professional safety helmet with adjustable suspension and clear visor.",
+    "price": 1200,
+    "category": "Safety Equipment",
+    "brand": "DeWalt",
+    "imageUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=400&h=300",
+    "inStock": false,
+    "sku": "DWT-HELMET-V",
+    "specifications": {
+      "Material": "HDPE",
+      "Weight": "350g",
+      "Adjustment": "Ratchet",
+      "Certification": "CE EN397",
+      "Color": "Yellow"
+    },
+    "createdAt": "2024-01-04T00:00:00Z",
+    "updatedAt": "2024-01-08T16:45:00Z"
+  },
+  {
+    "id": "5",
+    "name": "Hex Bolt M8 x 50mm (Pack of 50)",
+    "description": "Galvanized hex bolts suitable for outdoor construction projects.",
+    "price": 275,
+    "category": "Hardware",
+    "brand": "Generic",
+    "imageUrl": "https://images.unsplash.com/photo-1704732061018-3ac738176c20?w=400&h=300",
+    "inStock": true,
+    "sku": "HW-HEX-M8-50",
+    "specifications": {
+      "Size": "M8 x 50mm",
+      "Material": "Steel",
+      "Coating": "Galvanized",
+      "Grade": "8.8",
+      "Package": "50 pieces"
+    },
+    "createdAt": "2024-01-05T00:00:00Z",
+    "updatedAt": "2024-01-11T11:30:00Z"
+  },
+  {
+    "id": "6",
+    "name": "Black & Decker BEH710 Rotary Hammer",
+    "description": "Powerful 710W rotary hammer for heavy-duty drilling and chiseling.",
+    "price": 15000,
+    "category": "Power Tools",
+    "brand": "Black & Decker",
+    "imageUrl": "https://images.unsplash.com/photo-1755168648692-ef8937b7e63e?w=400&h=300",
+    "inStock": true,
+    "sku": "BD-BEH710",
+    "specifications": {
+      "Power": "710W",
+      "Max Drilling": "24mm",
+      "Impact Energy": "2.5J",
+      "Chuck": "SDS-Plus",
+      "Weight": "2.8 kg"
+    },
+    "createdAt": "2024-01-06T00:00:00Z",
+    "updatedAt": "2024-01-14T13:20:00Z"
+  },
+  {
+    "id": "7",
+    "name": "Stanley FatMax Utility Knife",
+    "description": "Heavy-duty utility knife with quick-change blade mechanism.",
+    "price": 850,
+    "category": "Hand Tools",
+    "brand": "Stanley",
+    "imageUrl": "https://images.unsplash.com/photo-1721250527686-9b31f11bfe3e?w=400&h=300",
+    "inStock": true,
+    "sku": "STN-FMAX-UK",
+    "specifications": {
+      "Blade Type": "18mm Snap-off",
+      "Handle": "Bi-Material Grip",
+      "Length": "165mm",
+      "Blade Storage": "5 blades",
+      "Weight": "180g"
+    },
+    "createdAt": "2024-01-07T00:00:00Z",
+    "updatedAt": "2024-01-09T08:45:00Z"
+  },
+  {
+    "id": "8",
+    "name": "Bosch Professional Safety Goggles",
+    "description": "Anti-fog safety goggles with UV protection and adjustable strap.",
+    "price": 650,
+    "category": "Safety Equipment",
+    "brand": "Bosch",
+    "imageUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=400&h=300",
+    "inStock": true,
+    "sku": "BSH-GO100",
+    "specifications": {
+      "Lens": "Polycarbonate",
+      "Coating": "Anti-fog",
+      "UV Protection": "99.9%",
+      "Strap": "Adjustable Elastic",
+      "Weight": "85g"
+    },
+    "createdAt": "2024-01-08T00:00:00Z",
+    "updatedAt": "2024-01-13T15:10:00Z"
+  }
+]

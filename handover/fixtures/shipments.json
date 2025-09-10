@@ -1,0 +1,237 @@
+[
+  {
+    "id": "1",
+    "referenceNumber": "CSG-2024-001",
+    "trackingNumber": "DE-8847392843",
+    "status": "in_transit",
+    "estimatedDelivery": "2024-02-15T00:00:00Z",
+    "carrier": "DHL Express",
+    "origin": "Hamburg, Germany",
+    "destination": "Jeen Mata Impex Warehouse",
+    "notes": "High-priority shipment with new Bosch power tools",
+    "manifestItems": [
+      { 
+        "productId": "1", 
+        "variantId": "1-10mm", 
+        "packingOptionId": "1-10-box",
+        "quantity": 10, 
+        "totalPieces": 50 
+      },
+      { 
+        "productId": "8", 
+        "quantity": 25, 
+        "totalPieces": 25 
+      }
+    ],
+    "timeline": [
+      { 
+        "id": "1", 
+        "status": "booked", 
+        "timestamp": "2024-01-05T00:00:00Z", 
+        "location": "Hamburg Port", 
+        "notes": "Consignment booked and documentation prepared" 
+      },
+      { 
+        "id": "2", 
+        "status": "in_transit", 
+        "timestamp": "2024-01-08T00:00:00Z", 
+        "location": "Sea Transit", 
+        "notes": "Departed Hamburg via cargo vessel" 
+      }
+    ],
+    "createdAt": "2024-01-05T00:00:00Z",
+    "updatedAt": "2024-01-08T00:00:00Z"
+  },
+  {
+    "id": "2",
+    "referenceNumber": "CSG-2024-002",
+    "trackingNumber": "FX-9923847562",
+    "status": "customs",
+    "estimatedDelivery": "2024-02-08T00:00:00Z",
+    "carrier": "FedEx International",
+    "origin": "Tokyo, Japan",
+    "destination": "Tribhuvan International Airport",
+    "notes": "Premium Makita tools - customs clearance in progress",
+    "manifestItems": [
+      { 
+        "productId": "2", 
+        "quantity": 30, 
+        "totalPieces": 30 
+      },
+      { 
+        "productId": "3", 
+        "variantId": "3-5m",
+        "packingOptionId": "3-5-box",
+        "quantity": 8, 
+        "totalPieces": 80 
+      }
+    ],
+    "timeline": [
+      { 
+        "id": "1", 
+        "status": "booked", 
+        "timestamp": "2024-01-10T00:00:00Z", 
+        "location": "Tokyo Warehouse" 
+      },
+      { 
+        "id": "2", 
+        "status": "in_transit", 
+        "timestamp": "2024-01-12T00:00:00Z", 
+        "location": "Narita Airport" 
+      },
+      { 
+        "id": "3", 
+        "status": "customs", 
+        "timestamp": "2024-02-05T00:00:00Z", 
+        "location": "Kathmandu Customs", 
+        "notes": "Documentation under review" 
+      }
+    ],
+    "createdAt": "2024-01-10T00:00:00Z",
+    "updatedAt": "2024-02-05T00:00:00Z"
+  },
+  {
+    "id": "3",
+    "referenceNumber": "CSG-2024-003",
+    "trackingNumber": "UPS-4472831956",
+    "status": "warehouse",
+    "estimatedDelivery": "2024-02-10T00:00:00Z",
+    "carrier": "UPS Worldwide",
+    "origin": "Milwaukee, USA",
+    "destination": "Jeen Mata Impex Warehouse",
+    "notes": "Milwaukee power tools consignment - quality inspection completed",
+    "manifestItems": [
+      { 
+        "productId": "6", 
+        "quantity": 40, 
+        "totalPieces": 40 
+      },
+      { 
+        "productId": "7", 
+        "quantity": 60, 
+        "totalPieces": 60 
+      }
+    ],
+    "timeline": [
+      { 
+        "id": "1", 
+        "status": "booked", 
+        "timestamp": "2024-01-20T00:00:00Z", 
+        "location": "Milwaukee Distribution" 
+      },
+      { 
+        "id": "2", 
+        "status": "in_transit", 
+        "timestamp": "2024-01-25T00:00:00Z", 
+        "location": "Chicago Hub" 
+      },
+      { 
+        "id": "3", 
+        "status": "customs", 
+        "timestamp": "2024-02-02T00:00:00Z", 
+        "location": "Kathmandu Customs" 
+      },
+      { 
+        "id": "4", 
+        "status": "warehouse", 
+        "timestamp": "2024-02-05T00:00:00Z", 
+        "location": "JMI Warehouse", 
+        "notes": "Arrived and under quality inspection" 
+      }
+    ],
+    "createdAt": "2024-01-20T00:00:00Z",
+    "updatedAt": "2024-02-05T00:00:00Z"
+  },
+  {
+    "id": "4",
+    "referenceNumber": "CSG-2024-004",
+    "trackingNumber": "TNT-7739485612",
+    "status": "available",
+    "estimatedDelivery": "2024-01-30T00:00:00Z",
+    "actualDelivery": "2024-01-28T00:00:00Z",
+    "carrier": "TNT Express",
+    "origin": "Stuttgart, Germany",
+    "destination": "Jeen Mata Impex Warehouse",
+    "notes": "Premium tools - now available for sale",
+    "manifestItems": [
+      { 
+        "productId": "1", 
+        "variantId": "1-13mm",
+        "packingOptionId": "1-13-box",
+        "quantity": 5, 
+        "totalPieces": 20 
+      }
+    ],
+    "timeline": [
+      { 
+        "id": "1", 
+        "status": "booked", 
+        "timestamp": "2024-01-15T00:00:00Z", 
+        "location": "Stuttgart Warehouse" 
+      },
+      { 
+        "id": "2", 
+        "status": "in_transit", 
+        "timestamp": "2024-01-18T00:00:00Z", 
+        "location": "Frankfurt Hub" 
+      },
+      { 
+        "id": "3", 
+        "status": "customs", 
+        "timestamp": "2024-01-25T00:00:00Z", 
+        "location": "Kathmandu Customs" 
+      },
+      { 
+        "id": "4", 
+        "status": "warehouse", 
+        "timestamp": "2024-01-27T00:00:00Z", 
+        "location": "JMI Warehouse" 
+      },
+      { 
+        "id": "5", 
+        "status": "available", 
+        "timestamp": "2024-01-28T00:00:00Z", 
+        "location": "JMI Showroom", 
+        "notes": "Quality checked and ready for sale" 
+      }
+    ],
+    "createdAt": "2024-01-15T00:00:00Z",
+    "updatedAt": "2024-01-28T00:00:00Z"
+  },
+  {
+    "id": "5",
+    "referenceNumber": "CSG-2024-005",
+    "trackingNumber": "AR-1128475639",
+    "status": "booked",
+    "estimatedDelivery": "2024-02-20T00:00:00Z",
+    "carrier": "Air Cargo Express",
+    "origin": "Guangzhou, China",
+    "destination": "Tribhuvan International Airport",
+    "notes": "Mixed consignment - hand tools and hardware accessories",
+    "manifestItems": [
+      { 
+        "productId": "3", 
+        "variantId": "3-3m",
+        "packingOptionId": "3-3-carton",
+        "quantity": 2, 
+        "totalPieces": 288 
+      },
+      { 
+        "productId": "5", 
+        "quantity": 500, 
+        "totalPieces": 500 
+      }
+    ],
+    "timeline": [
+      { 
+        "id": "1", 
+        "status": "booked", 
+        "timestamp": "2024-02-01T00:00:00Z", 
+        "location": "Guangzhou Export Hub", 
+        "notes": "Documentation prepared, awaiting cargo space" 
+      }
+    ],
+    "createdAt": "2024-02-01T00:00:00Z",
+    "updatedAt": "2024-02-01T00:00:00Z"
+  }
+]

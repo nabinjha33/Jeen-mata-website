@@ -1,0 +1,34 @@
+[
+  {
+    "id": "1",
+    "name": "Power Tools",
+    "nameNe": "पावर टूल्स",
+    "description": "Electric and battery-powered tools for professional and DIY use",
+    "imageUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=300&h=200",
+    "productCount": 45
+  },
+  {
+    "id": "2",
+    "name": "Hand Tools",
+    "nameNe": "ह्यान्ड टूल्स",
+    "description": "Manual tools for various construction and repair tasks",
+    "imageUrl": "https://images.unsplash.com/photo-1721250527686-9b31f11bfe3e?w=300&h=200",
+    "productCount": 78
+  },
+  {
+    "id": "3",
+    "name": "Hardware",
+    "nameNe": "हार्डवेयर",
+    "description": "Fasteners, fittings, and construction hardware",
+    "imageUrl": "https://images.unsplash.com/photo-1704732061018-3ac738176c20?w=300&h=200",
+    "productCount": 156
+  },
+  {
+    "id": "4",
+    "name": "Safety Equipment",
+    "nameNe": "सुरक्षा उपकरण",
+    "description": "Personal protective equipment and safety gear",
+    "imageUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=300&h=200",
+    "productCount": 32
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "name": "Bosch",
+    "description": "German engineering excellence in power tools",
+    "logoUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=150&h=75",
+    "website": "https://bosch.com",
+    "countryOfOrigin": "Germany",
+    "productCount": 28
+  },
+  {
+    "id": "2",
+    "name": "Makita",
+    "description": "Japanese precision in cordless power tools",
+    "logoUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=150&h=75",
+    "website": "https://makita.com",
+    "countryOfOrigin": "Japan",
+    "productCount": 35
+  },
+  {
+    "id": "3",
+    "name": "DeWalt",
+    "description": "American durability for professional contractors",
+    "logoUrl": "https://images.unsplash.com/photo-1685320198649-781e83a61de4?w=150&h=75",
+    "website": "https://dewalt.com",
+    "countryOfOrigin": "USA",
+    "productCount": 42
+  },
+  {
+    "id": "4",
+    "name": "Stanley",
+    "description": "Trusted hand tools since 1843",
+    "logoUrl": "https://images.unsplash.com/photo-1721250527686-9b31f11bfe3e?w=150&h=75",
+    "website": "https://stanley.com",
+    "countryOfOrigin": "USA",
+    "productCount": 67
+  }
+]

@@ -1,0 +1,42 @@
+{
+  "catalog": {
+    "priceVisibility": true,
+    "lowStockThreshold": 10,
+    "outOfStockThreshold": 0
+  },
+  "localization": {
+    "defaultLanguage": "en",
+    "enableMultiLanguage": true,
+    "supportedLanguages": ["en", "ne"],
+    "uiCopy": {
+      "en": {
+        "companyName": "Jeen Mata Impex",
+        "companyTagline": "Quality Tools & Hardware",
+        "welcome": "Welcome to our store",
+        "products": "Products",
+        "brands": "Brands",
+        "inquiries": "Inquiries",
+        "shipments": "Shipments"
+      },
+      "ne": {
+        "companyName": "जीन माता इम्पेक्स",
+        "companyTagline": "गुणस्तरीय उपकरण र हार्डवेयर",
+        "welcome": "हाम्रो स्टोरमा स्वागत छ",
+        "products": "उत्पादनहरू",
+        "brands": "ब्रान्डहरू",
+        "inquiries": "सोधपुछ",
+        "shipments": "ढुवानी"
+      }
+    }
+  },
+  "inquiries": {
+    "autoAssignToOwner": true,
+    "emailNotifications": true,
+    "whatsappNotifications": true
+  },
+  "shipments": {
+    "defaultCarrier": "DHL Express",
+    "trackingEnabled": true,
+    "estimatedDeliveryDays": 7
+  }
+}
