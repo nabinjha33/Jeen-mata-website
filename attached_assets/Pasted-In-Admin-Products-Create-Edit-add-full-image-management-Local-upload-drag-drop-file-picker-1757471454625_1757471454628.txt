@@ -1,0 +1,103 @@
+In Admin → Products (Create/Edit), add full image management:
+
+Local upload (drag-drop / file picker / paste) with preview & progress
+
+Optional URL input (keep existing)
+
+Client-side validation & compression
+
+Works without backend (in-memory) and with backend (if upload endpoint exists)
+
+1) UI Components
+
+ImageManager (reusable) with:
+
+Dropzone + “Choose files” button (accept: jpg, png, webp; multiple)
+
+Paste-from-clipboard support
+
+Grid of thumbnails (reorder via drag, remove, set “primary”)
+
+URL add field (optional)
+
+Per-item status: ready | uploading | uploaded | error
+
+ImageItem shows:
+
+Thumbnail, filename, size
+
+Actions: Set Primary, Rename Alt, Remove
+
+Progress bar during upload
+
+2) Client Validation & Processing (no backend required)
+
+Max files per product: 8 (configurable)
+
+Max size: 3–5 MB per file (configurable)
+
+Types: image/jpeg, image/png, image/webp
+
+On drop/pick:
+
+Auto-compress to WebP (target ~85% quality, long edge max 1600px)
+
+Generate local preview via URL.createObjectURL
+
+Store as { id, file, previewUrl, alt, isPrimary, status } in component state or store
+
+3) Storage Abstraction (works with or without backend)
+
+Implement uploadImage(file): Promise<{ publicUrl, storagePath }>:
+
+If backend endpoint exists (e.g., POST /api/v1/uploads/signed-url):
+
+Request signed URL with a path hint: products/{productId}/
+
+PUT the file to the signed URL
+
+Receive publicUrl and storagePath → mark as uploaded
+
+If no backend yet:
+
+Keep images in memory and mark them as ready (UI-only)
+
+On Save Product, include a pendingImages array so backend can process later (or show a toast: “Uploads will be saved when storage is connected”)
+
+The UI must never block: always allow Save; if storage is not configured, keep images attached in UI state and surface a small banner: “Live storage not connected—images will not persist.”
+
+4) Product Form Integration
+
+Add “Images” section using ImageManager
+
+On Save/Create product:
+
+If storage is configured: upload any ready files → collect publicUrls → include in product payload images: [{url, alt, sort, isPrimary}]
+
+If storage is not configured: persist to local store only (demo mode), show info toast
+
+5) Nice-to-haves (UI only)
+
+Reorder thumbnails updates a sort number
+
+Alt text inline edit
+
+“Make Primary” badge on first image by default
+
+Keyboard a11y: focus ring, Delete to remove, Enter to set primary
+
+6) Acceptance Criteria
+
+Drag-drop / file-picker / paste adds images; previews appear instantly
+
+Invalid type/oversized files show clear errors (no crash)
+
+Thumbnails reorder, remove, set primary all work
+
+URL add still works (coexists with local upload)
+
+If storage is connected, uploads show progress and become uploaded with persistent publicUrl
+
+If storage is not connected, UI still works (images remain in memory) with a clear “not persisted” banner
+
+Proceed. If a referenced component doesn’t exist, create it with sensible defaults. Never render blank—use skeletons and toasts.
